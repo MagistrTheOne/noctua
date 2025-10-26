@@ -37,9 +37,19 @@ interface NavigationBarProps {
     name: string
     path: string
   } | null
+  onToggleTerminal?: () => void
+  isTerminalOpen?: boolean
+  isWebContainerReady?: boolean
 }
 
-export function NavigationBar({ project, user, activeFile }: NavigationBarProps) {
+export function NavigationBar({ 
+  project, 
+  user, 
+  activeFile, 
+  onToggleTerminal,
+  isTerminalOpen = false,
+  isWebContainerReady = false
+}: NavigationBarProps) {
   const [isEditingName, setIsEditingName] = useState(false)
   const [projectName, setProjectName] = useState(project.name)
 
@@ -71,7 +81,7 @@ export function NavigationBar({ project, user, activeFile }: NavigationBarProps)
     <div className="glass-navbar h-16 flex items-center justify-between px-4 border-b border-zinc-800">
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-linear-to-r from-blue-600 to-purple-600 flex items-center justify-center">
             <span className="text-white font-bold text-sm">N</span>
           </div>
           <span className="text-xl font-bold text-white">Nocturide</span>
@@ -146,10 +156,17 @@ export function NavigationBar({ project, user, activeFile }: NavigationBarProps)
         <Button
           variant="ghost"
           size="sm"
-          className="text-zinc-300 hover:text-white hover:bg-zinc-800"
+          onClick={onToggleTerminal}
+          className={`text-zinc-300 hover:text-white hover:bg-zinc-800 ${
+            isTerminalOpen ? 'bg-zinc-800 text-white' : ''
+          }`}
+          disabled={!isWebContainerReady}
         >
           <Terminal className="h-4 w-4 mr-2" />
           Terminal
+          {!isWebContainerReady && (
+            <span className="ml-1 text-xs text-zinc-500">(Loading...)</span>
+          )}
         </Button>
         
         <Button

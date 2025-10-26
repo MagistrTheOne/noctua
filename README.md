@@ -7,7 +7,7 @@ Modern web-based development environment with AI assistance powered by GigaChat 
 - **Monaco Editor** - Full-featured code editor with syntax highlighting and IntelliSense
 - **AI Assistant** - Powered by GigaChat API for code explanations, refactoring, and generation
 - **File Management** - Drag & drop file tree with context menus
-- **Real-time Execution** - Terminal with WebContainers API (Phase 3)
+- **Real-time Execution** - Terminal with WebContainers API for Node.js execution in browser
 - **Glassmorphism UI** - Beautiful modern design with blur effects
 - **Authentication** - Better Auth with Email Magic Link + GitHub OAuth
 - **Database** - Neon PostgreSQL with Drizzle ORM
@@ -20,7 +20,7 @@ Modern web-based development environment with AI assistance powered by GigaChat 
 - **Authentication**: Better Auth
 - **AI**: GigaChat API
 - **Editor**: Monaco Editor
-- **Terminal**: WebContainers API (Phase 3)
+- **Terminal**: WebContainers API, xterm.js
 
 ## 📋 Prerequisites
 
@@ -139,6 +139,9 @@ nocturide/
 ### AI Assistant
 - `POST /api/ai` - Send message to GigaChat API
 
+### WebContainer
+- `POST /api/webcontainer` - WebContainer operations (sync files, run commands, etc.)
+
 ## 🎨 Features by Phase
 
 ### ✅ Phase 1 (Completed)
@@ -156,11 +159,13 @@ nocturide/
 - Code explanation, refactoring, and generation
 - Real-time AI responses
 
-### 🔄 Phase 3 (Planned)
-- WebContainers API for real terminal
-- npm install/run support
-- Live code execution
-- Package management
+### ✅ Phase 3 (Completed)
+- WebContainers API integration for real Node.js execution
+- xterm.js terminal with full interactive support
+- npm install/run commands with live output
+- File system synchronization between IDE and WebContainer
+- Process management and port handling
+- Real-time code execution in browser
 
 ## 🚀 Deployment
 

@@ -63,7 +63,7 @@ export const files = pgTable('files', {
   content: text('content').default(''),
   isDirectory: boolean('is_directory').default(false),
   projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
-  parentId: uuid('parent_id').references(() => files.id, { onDelete: 'cascade' }),
+  parentId: uuid('parent_id'),
   size: integer('size').default(0),
   mimeType: text('mime_type'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
