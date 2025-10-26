@@ -2,32 +2,37 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from 'next-intl'
+import { useInView } from '@/hooks/use-in-view'
 
 export function Footer() {
+  const [ref, isInView] = useInView({ threshold: 0.1 })
+  const t = useTranslations('footer')
+
   const footerLinks = {
     product: [
-      { name: 'Features', href: '#features' },
-      { name: 'Templates', href: '#templates' },
-      { name: 'Pricing', href: '#pricing' },
-      { name: 'API', href: '/docs/api' },
+      { name: t('product.features'), href: '#features' },
+      { name: t('product.templates'), href: '#templates' },
+      { name: t('product.pricing'), href: '#pricing' },
+      { name: t('product.api'), href: '/docs/api' },
     ],
     company: [
-      { name: 'About', href: '#about' },
-      { name: 'Blog', href: '/blog' },
-      { name: 'Careers', href: '/careers' },
-      { name: 'Contact', href: '#contact' },
+      { name: t('company.about'), href: '#about' },
+      { name: t('company.blog'), href: '/blog' },
+      { name: t('company.careers'), href: '/careers' },
+      { name: t('company.contact'), href: '#contact' },
     ],
     resources: [
-      { name: 'Documentation', href: '/docs' },
-      { name: 'Help Center', href: '/help' },
-      { name: 'Community', href: '/community' },
-      { name: 'Status', href: '/status' },
+      { name: t('resources.documentation'), href: '/docs' },
+      { name: t('resources.help'), href: '/help' },
+      { name: t('resources.community'), href: '/community' },
+      { name: t('resources.status'), href: '/status' },
     ],
     legal: [
-      { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Terms of Service', href: '/terms' },
-      { name: 'Cookie Policy', href: '/cookies' },
-      { name: 'GDPR', href: '/gdpr' },
+      { name: t('legal.privacy'), href: '/privacy' },
+      { name: t('legal.terms'), href: '/terms' },
+      { name: t('legal.cookies'), href: '/cookies' },
+      { name: t('legal.gdpr'), href: '/gdpr' },
     ],
   }
 
@@ -38,7 +43,7 @@ export function Footer() {
   ]
 
   return (
-    <footer className="border-t border-zinc-800/50 bg-zinc-950/50 backdrop-blur-sm">
+    <footer ref={ref as any} className="border-t border-zinc-800/50 bg-zinc-950/50 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Brand Section */}
@@ -47,8 +52,7 @@ export function Footer() {
               <span className="text-2xl font-bold text-white">Nocturide</span>
             </div>
             <p className="text-zinc-400 text-sm leading-relaxed max-w-md">
-              The modern web-based development environment with AI assistance. 
-              Build, code, and deploy your projects faster than ever before.
+              {t('bottom.madeBy').replace('MagistrTheOne | 2025 | Krasnodar', 'MagistrTheOne | 2025 | Krasnodar')}
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social) => (
@@ -69,7 +73,7 @@ export function Footer() {
 
           {/* Product Links */}
           <div className="space-y-4">
-            <h3 className="text-white font-semibold">Product</h3>
+            <h3 className="text-white font-semibold">{t('product.title')}</h3>
             <ul className="space-y-2">
               {footerLinks.product.map((link) => (
                 <li key={link.name}>
@@ -86,7 +90,7 @@ export function Footer() {
 
           {/* Company Links */}
           <div className="space-y-4">
-            <h3 className="text-white font-semibold">Company</h3>
+            <h3 className="text-white font-semibold">{t('company.title')}</h3>
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
@@ -103,7 +107,7 @@ export function Footer() {
 
           {/* Resources Links */}
           <div className="space-y-4">
-            <h3 className="text-white font-semibold">Resources</h3>
+            <h3 className="text-white font-semibold">{t('resources.title')}</h3>
             <ul className="space-y-2">
               {footerLinks.resources.map((link) => (
                 <li key={link.name}>
@@ -120,7 +124,7 @@ export function Footer() {
 
           {/* Legal Links */}
           <div className="space-y-4">
-            <h3 className="text-white font-semibold">Legal</h3>
+            <h3 className="text-white font-semibold">{t('legal.title')}</h3>
             <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
@@ -139,17 +143,17 @@ export function Footer() {
         {/* Newsletter Signup */}
         <div className="mt-12 pt-8 border-t border-zinc-800/50">
           <div className="max-w-md mx-auto text-center space-y-4">
-            <h3 className="text-white font-semibold">Stay Updated</h3>
+            <h3 className="text-white font-semibold">{t('newsletter.title')}</h3>
             <p className="text-zinc-400 text-sm">
-              Get the latest updates, new features, and tips delivered to your inbox.
+              {t('newsletter.subtitle')}
             </p>
             <div className="flex space-x-2">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('newsletter.placeholder')}
                 className="flex-1 px-3 py-2 bg-zinc-900/50 border border-zinc-700 rounded-md text-zinc-100 placeholder:text-zinc-500 text-sm focus:outline-none focus:border-zinc-600"
               />
-              <Button 
+              <Button
                 size="sm"
                 className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-100"
                 onClick={() => {
@@ -157,7 +161,7 @@ export function Footer() {
                   window.location.href = '#contact';
                 }}
               >
-                Subscribe
+                {t('newsletter.subscribe')}
               </Button>
             </div>
           </div>
@@ -167,13 +171,13 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-zinc-800/50">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-zinc-400 text-sm">
-              © 2025 MagistrTheOne. All rights reserved.
+              {t('bottom.copyright')}
             </div>
             <div className="flex items-center space-x-6 text-sm text-zinc-400">
-              <span>Made with ❤️ by MagistrTheOne | 2025 | Krasnodar</span>
+              <span>{t('bottom.madeBy')}</span>
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>All systems operational</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span>{t('bottom.status')}</span>
               </div>
             </div>
           </div>

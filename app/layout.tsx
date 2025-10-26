@@ -1,7 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+import { notFound } from 'next/navigation';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { JSONLD } from "@/components/seo/json-ld";
+import { Analytics } from "@/components/analytics/analytics";
+import { locales } from '@/i18n';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,27 +20,72 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nocturide IDE - Modern Web-Based Development Environment",
-  description: "Build, code, and deploy your projects with AI assistance in a beautiful, modern web-based IDE",
-  keywords: ["IDE", "code editor", "web development", "AI assistant", "Monaco editor"],
+  title: "Nocturide IDE - AI-Powered Web Development Environment",
+  description: "Create stunning apps and websites with AI assistance. Modern web-based IDE with code generation, real-time collaboration, and instant deployment. Start building for free.",
+  keywords: ["AI IDE", "code generator", "web development", "AI assistant", "Monaco editor", "Next.js", "TypeScript", "React", "AI coding", "web-based IDE"],
   authors: [{ name: "MagistrTheOne" }],
   creator: "MagistrTheOne",
   publisher: "MagistrTheOne",
-  robots: "index, follow",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'your-google-site-verification-code',
+    yandex: 'your-yandex-verification-code',
+  },
+  alternates: {
+    canonical: 'https://nocturide.dev',
+    languages: {
+      'ru': 'https://nocturide.dev/ru',
+      'en': 'https://nocturide.dev/en',
+    },
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://nocturide.dev",
-    title: "Nocturide IDE - Modern Web-Based Development Environment",
-    description: "Build, code, and deploy your projects with AI assistance in a beautiful, modern web-based IDE",
+    title: "Nocturide IDE - AI-Powered Web Development Environment",
+    description: "Create stunning apps and websites with AI assistance. Modern web-based IDE with code generation, real-time collaboration, and instant deployment.",
     siteName: "Nocturide IDE",
+    images: [
+      {
+        url: "https://nocturide.dev/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Nocturide IDE - AI-Powered Web Development Environment",
+      },
+    ],
+    alternates: {
+      canonical: 'https://nocturide.dev',
+      languages: {
+        'ru': 'https://nocturide.dev/ru',
+        'en': 'https://nocturide.dev/en',
+      },
+    },
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nocturide IDE - Modern Web-Based Development Environment",
-    description: "Build, code, and deploy your projects with AI assistance in a beautiful, modern web-based IDE",
+    site: "@NocturideIDE",
     creator: "@MagistrTheOne",
+    title: "Nocturide IDE - AI-Powered Web Development Environment",
+    description: "Create stunning apps and websites with AI assistance. Modern web-based IDE with code generation, real-time collaboration, and instant deployment.",
+    images: ["https://nocturide.dev/twitter-image.jpg"],
   },
+  category: "Technology",
+  classification: "Software Development Tools",
 };
 
 export const viewport: Viewport = {
@@ -43,19 +94,38 @@ export const viewport: Viewport = {
   themeColor: "#18181b",
 };
 
-export default function RootLayout({
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+export default async function RootLayout({
   children,
+  params: { locale }
 }: Readonly<{
   children: React.ReactNode;
+  params: { locale: string };
 }>) {
+  // Ensure that the incoming `locale` parameter is valid
+  if (!locales.includes(locale as any)) notFound();
+
+  // Providing all messages to the client
+  // side is the easiest way to get started
+  const messages = await getMessages();
+
   return (
-    <html lang="en" className="dark">
+    <html lang={locale} className="dark">
+      <head>
+        <JSONLD />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <NextIntlClientProvider messages={messages}>
+          <AuthProvider>
+            <Analytics />
+            {children}
+          </AuthProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

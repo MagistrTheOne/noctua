@@ -1,0 +1,359 @@
+{
+  "navigation": {
+    "features": "Features",
+    "about": "About",
+    "templates": "Templates",
+    "contact": "Contact",
+    "signin": "Sign In",
+    "signup": "Sign Up"
+  },
+  "hero": {
+    "title": "What will you build today?",
+    "subtitle": "Create stunning apps and websites by describing what you want to build. Our AI will generate the code, structure, and everything you need.",
+    "placeholder": "Create a todo app with React, TypeScript, and Tailwind CSS...",
+    "create": "Create",
+    "creating": "Creating...",
+    "noCreditCard": "No credit card required",
+    "freeToStart": "Free to start",
+    "quickSetup": "5 min setup",
+    "noCoding": "No coding needed",
+    "aiPowered": "AI-powered",
+    "instantResults": "Instant results"
+  },
+  "features": {
+    "title": "Powerful Features",
+    "subtitle": "Everything you need to build, test, and deploy your projects in one place",
+    "aiDevelopment": {
+      "title": "AI-Powered Development",
+      "description": "Describe what you want to build and watch as AI generates complete, functional applications with modern architecture."
+    },
+    "fullstackGeneration": {
+      "title": "Full-Stack Generation",
+      "description": "Get complete projects with frontend, backend, database schemas, and deployment configurations automatically created."
+    },
+    "realtimeCollaboration": {
+      "title": "Real-Time Collaboration",
+      "description": "Work together in real-time with built-in collaboration tools, comments, and version control integration."
+    },
+    "instantDeployment": {
+      "title": "Instant Deployment",
+      "description": "Deploy your applications instantly to production with one click. No configuration or setup required."
+    },
+    "smartEditor": {
+      "title": "Smart Code Editor",
+      "description": "Advanced code editor with AI autocomplete, error detection, and intelligent suggestions as you type."
+    },
+    "enterpriseSecurity": {
+      "title": "Enterprise Security",
+      "description": "Bank-level security with end-to-end encryption, SOC2 compliance, and enterprise-grade authentication."
+    }
+  },
+  "about": {
+    "title": "About Nocturide",
+    "subtitle": "We're revolutionizing how developers build applications by combining the power of AI with modern web technologies.",
+    "missionTitle": "Our Mission",
+    "missionSubtitle": "To democratize software development by making advanced AI tools accessible to developers of all skill levels.",
+    "missionText": "We believe that the future of development lies in the seamless integration of human creativity and artificial intelligence. By removing the complexity of setup, configuration, and boilerplate code, we enable developers to focus on what truly matters: building innovative solutions that make a difference.",
+    "builtForFuture": "Built for the Future",
+    "builtForFutureText1": "Nocturide IDE represents the next generation of development tools. We've eliminated the barriers between idea and implementation, allowing developers to focus on creativity rather than boilerplate code.",
+    "builtForFutureText2": "Our AI-powered platform understands context, generates production-ready code, and adapts to your specific needs. Whether you're building a simple website or a complex enterprise application, Nocturide accelerates your development process.",
+    "alwaysUpdated": "Always up-to-date with latest technologies",
+    "enterpriseSecurity": "Enterprise-grade security and reliability",
+    "stats": {
+      "projects": {
+        "label": "Projects Created",
+        "value": "10,000+"
+      },
+      "users": {
+        "label": "Active Users",
+        "value": "5,000+"
+      },
+      "lines": {
+        "label": "Lines Generated",
+        "value": "1M+"
+      },
+      "countries": {
+        "label": "Countries",
+        "value": "50+"
+      }
+    }
+  },
+  "templates": {
+    "title": "Project Templates",
+    "subtitle": "Start with professionally designed templates and customize them to fit your needs",
+    "all": "All",
+    "business": "Business",
+    "social": "Social",
+    "productivity": "Productivity",
+    "content": "Content",
+    "analytics": "Analytics",
+    "backend": "Backend",
+    "useTemplate": "Use Template",
+    "createCustom": "Create Custom Template",
+    "customTitle": "Can't find what you're looking for?",
+    "customText": "Describe your project idea and our AI will create a custom template tailored to your specific needs.",
+    "templates": {
+      "ecommerce": {
+        "title": "E-commerce Store",
+        "description": "Complete online store with payment integration, inventory management, and admin dashboard.",
+        "tech": ["React", "Node.js", "PostgreSQL", "Stripe"],
+        "category": "Business"
+      },
+      "social": {
+        "title": "Social Media App",
+        "description": "Modern social platform with real-time messaging, posts, and user profiles.",
+        "tech": ["Next.js", "Socket.io", "MongoDB", "Redis"],
+        "category": "Social"
+      },
+      "taskManagement": {
+        "title": "Task Management",
+        "description": "Collaborative project management tool with boards, timelines, and team collaboration.",
+        "tech": ["Vue.js", "Express", "MySQL", "WebSocket"],
+        "category": "Productivity"
+      },
+      "blog": {
+        "title": "Blog Platform",
+        "description": "Content management system with SEO optimization, comments, and analytics.",
+        "tech": ["Next.js", "Sanity", "Tailwind", "Vercel"],
+        "category": "Content"
+      },
+      "saas": {
+        "title": "SaaS Dashboard",
+        "description": "Analytics dashboard with charts, user management, and subscription handling.",
+        "tech": ["React", "D3.js", "Firebase", "Stripe"],
+        "category": "Analytics"
+      },
+      "mobileBackend": {
+        "title": "Mobile App Backend",
+        "description": "RESTful API for mobile applications with authentication and real-time features.",
+        "tech": ["Node.js", "Express", "MongoDB", "JWT"],
+        "category": "Backend"
+      }
+    }
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Have questions? Need support? We're here to help you succeed.",
+    "information": {
+      "title": "Contact Information",
+      "subtitle": "Reach out to us through any of these channels",
+      "email": {
+        "title": "Email",
+        "value": "maxonyushko71@gmail.com"
+      },
+      "telegram": {
+        "title": "Telegram",
+        "value": "@MagistrTheOne"
+      },
+      "github": {
+        "title": "GitHub",
+        "value": "MagistrTheOne"
+      },
+      "location": {
+        "title": "Location",
+        "value": "Krasnodar, Russia"
+      }
+    },
+    "support": {
+      "title": "Support Hours",
+      "subtitle": "When you can expect a response",
+      "mondayFriday": "Monday - Friday",
+      "mondayFridayHours": "9:00 AM - 6:00 PM UTC",
+      "saturday": "Saturday",
+      "saturdayHours": "10:00 AM - 4:00 PM UTC",
+      "sunday": "Sunday",
+      "sundayHours": "Closed"
+    },
+    "form": {
+      "title": "Send us a Message",
+      "subtitle": "Fill out the form below and we'll get back to you within 24 hours",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send Message",
+      "placeholder": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "john@example.com",
+        "subject": "How can we help?",
+        "message": "Tell us more about your question or feedback..."
+      }
+    }
+  },
+  "footer": {
+    "product": {
+      "title": "Product",
+      "features": "Features",
+      "templates": "Templates",
+      "pricing": "Pricing",
+      "api": "API"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About",
+      "blog": "Blog",
+      "careers": "Careers",
+      "contact": "Contact"
+    },
+    "resources": {
+      "title": "Resources",
+      "documentation": "Documentation",
+      "help": "Help Center",
+      "community": "Community",
+      "status": "Status"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy",
+      "gdpr": "GDPR"
+    },
+    "newsletter": {
+      "title": "Stay Updated",
+      "subtitle": "Get the latest updates, new features, and tips delivered to your inbox.",
+      "placeholder": "Enter your email",
+      "subscribe": "Subscribe"
+    },
+    "bottom": {
+      "copyright": "© 2025 MagistrTheOne. All rights reserved.",
+      "madeBy": "Made with ❤️ by MagistrTheOne | 2025 | Krasnodar",
+      "status": "All systems operational"
+    }
+  },
+  "comparison": {
+    "title": "Nocturide vs Traditional Development",
+    "traditional": "Traditional Development",
+    "nocturide": "Nocturide",
+    "features": {
+      "setupTime": "Setup Time",
+      "setupTraditional": "Days/Weeks",
+      "setupNocturide": "5 minutes",
+      "codeQuality": "Code Quality",
+      "codeTraditional": "Depends on developer",
+      "codeNocturide": "Optimized, production-ready",
+      "deployment": "Deployment",
+      "deploymentTraditional": "Complex setup",
+      "deploymentNocturide": "One click",
+      "cost": "Cost",
+      "costTraditional": "High (developer + tools)",
+      "costNocturide": "Free to start",
+      "learning": "Learning Curve",
+      "learningTraditional": "Months",
+      "learningNocturide": "5 minutes"
+    }
+  },
+  "pricing": {
+    "title": "Pricing Plans",
+    "subtitle": "Choose the plan that works for you",
+    "free": {
+      "name": "Free",
+      "price": "$0",
+      "period": "month",
+      "features": "5 projects,Basic AI,Community support,Standard support",
+      "button": "Get Started"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "$19",
+      "period": "month",
+      "features": "Unlimited projects,Advanced AI,Priority support,Premium templates,API access",
+      "button": "Choose Pro",
+      "popular": "Most Popular"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price": "Custom",
+      "period": "",
+      "features": "All Pro features,Dedicated support,Custom integrations,SLA guarantees,Team training",
+      "button": "Contact Us"
+    }
+  },
+  "roadmap": {
+    "title": "Roadmap",
+    "subtitle": "What we're planning to add next",
+    "q1": {
+      "title": "Q1 2025",
+      "items": [
+        "Mobile app",
+        "GitHub integration",
+        "Plugins & extensions",
+        "Team collaboration"
+      ]
+    },
+    "q2": {
+      "title": "Q2 2025",
+      "items": [
+        "AI code review",
+        "Automated testing",
+        "Multi-language support",
+        "API integrations"
+      ]
+    },
+    "q3": {
+      "title": "Q3 2025",
+      "items": [
+        "Enterprise features",
+        "Advanced analytics",
+        "Custom models",
+        "White-label solution"
+      ]
+    }
+  },
+  "useCases": {
+    "title": "Use Cases",
+    "subtitle": "How different professionals use Nocturide",
+    "startup": {
+      "title": "Startups",
+      "description": "Quickly build MVPs and test ideas without development costs"
+    },
+    "freelancers": {
+      "title": "Freelancers",
+      "description": "Speed up development and take on more projects with ready solutions"
+    },
+    "agencies": {
+      "title": "Agencies",
+      "description": "Standardize processes and boost team productivity"
+    },
+    "education": {
+      "title": "Education",
+      "description": "Teach students modern technologies without complex setup"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email address",
+    "minLength": "Minimum {min} characters"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "questions": {
+      "whatIs": {
+        "question": "What is Nocturide?",
+        "answer": "Nocturide is an AI-powered web development environment that lets you create applications by simply describing them. The platform generates code, project structure, and all necessary components automatically."
+      },
+      "howWorks": {
+        "question": "How does it work?",
+        "answer": "You describe what you want to create in the text field. Our AI analyzes your request and generates a fully functional application with modern technology stack. You can immediately start editing and customizing the code."
+      },
+      "cost": {
+        "question": "How much does it cost?",
+        "answer": "We have a free plan with basic features. Paid plans start at $19/month and include advanced AI capabilities, unlimited projects, and priority support."
+      },
+      "security": {
+        "question": "What about security?",
+        "answer": "We use enterprise-grade security with end-to-end encryption, SOC2 compliance, and secure authentication. All data is stored in secure cloud services."
+      },
+      "support": {
+        "question": "How do I get support?",
+        "answer": "We provide support through email, Telegram, and documentation. Paid users get priority support. Average response time is 24 hours."
+      },
+      "export": {
+        "question": "Can I export my code?",
+        "answer": "Yes, you can export your entire project as a ZIP archive with full source code. GitHub integration is also available for version control."
+      }
+    }
+  }
+}
