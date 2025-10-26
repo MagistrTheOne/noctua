@@ -1,201 +1,213 @@
-# Nocturide IDE
+# Nocturide
 
-Modern web-based development environment with AI assistance powered by GigaChat API.
+**Современная веб-среда разработки с ИИ-помощником. Создавайте, программируйте и развертывайте проекты быстрее чем когда-либо.**
 
-## 🚀 Features
+## 🚀 Описание проекта
 
-- **Monaco Editor** - Full-featured code editor with syntax highlighting and IntelliSense
-- **AI Assistant** - Powered by GigaChat API for code explanations, refactoring, and generation
-- **File Management** - Drag & drop file tree with context menus
-- **Real-time Execution** - Terminal with WebContainers API for Node.js execution in browser
-- **Glassmorphism UI** - Beautiful modern design with blur effects
-- **Authentication** - Better Auth with Email Magic Link + GitHub OAuth
-- **Database** - Neon PostgreSQL with Drizzle ORM
+Nocturide - это полнофункциональная IDE в браузере, которая использует искусственный интеллект для генерации кода. Просто опишите, что вы хотите создать, и ИИ сгенерирует полный проект с фронтендом, бэкендом и базой данных.
 
-## 🛠️ Tech Stack
+### ✨ Основные возможности
 
-- **Frontend**: Next.js 16, React 19.2, TypeScript
-- **Styling**: Tailwind CSS 4, Glassmorphism effects
-- **Database**: Neon PostgreSQL, Drizzle ORM
-- **Authentication**: Better Auth
-- **AI**: GigaChat API
-- **Editor**: Monaco Editor
-- **Terminal**: WebContainers API, xterm.js
+- **ИИ-генерация кода**: Создавайте проекты описанием на естественном языке
+- **Полнофункциональная IDE**: Monaco Editor с подсветкой синтаксиса и автодополнением
+- **Встроенный терминал**: Выполняйте команды прямо в браузере
+- **Система файлов**: Полноценное управление файлами проекта
+- **Готовые шаблоны**: Быстрый старт с популярными технологиями
+- **Реальное время**: Все изменения сохраняются автоматически
 
-## 📋 Prerequisites
+## 🛠 Технологический стек
 
-- Node.js 20.9+ (LTS)
-- PostgreSQL database (Neon recommended)
-- GigaChat API credentials
+### Frontend
+- **Next.js 16** - React фреймворк с новыми возможностями:
+  - Cache Components для оптимизации производительности
+  - Turbopack (стабильный) - быстрая сборка и разработка
+  - Proxy.ts вместо middleware.ts для четких сетевых границ
+  - React 19.2 с View Transitions и useEffectEvent
+- **React 19.2** - Последняя версия с новыми хуками и оптимизациями
+- **TypeScript** - Типизированный JavaScript
+- **Tailwind CSS** - Utility-first CSS фреймворк
+- **shadcn/ui** - Компоненты интерфейса
 
-## 🔧 Installation
+### Backend & Database
+- **Better Auth** - Современная система аутентификации с поддержкой:
+  - Email/Password аутентификация
+  - OAuth провайдеры (GitHub)
+  - Сессии с автоматическим обновлением
+  - Защита маршрутов через proxy.ts
+- **Drizzle ORM** - Типобезопасная работа с базой данных
+- **PostgreSQL (Neon)** - Облачная база данных
+- **Next.js API Routes** - Серверная логика
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd nocturide
-   ```
+### AI & Development Tools
+- **GigaChat API** - Российский ИИ для генерации кода
+- **Monaco Editor** - Редактор кода от VS Code
+- **WebContainer API** - Выполнение Node.js в браузере
+- **Zod** - Валидация схем данных
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+### DevOps & Deployment
+- **Vercel** - Развертывание и хостинг
+- **Turbopack** - Быстрая сборка (2-5x быстрее)
+- **ESLint** - Линтинг кода
+- **TypeScript** - Проверка типов
 
-3. **Environment setup**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Fill in your environment variables:
-   ```env
-   # Database
-   DATABASE_URL="postgresql://username:password@hostname:port/database?sslmode=require"
-   
-   # Better Auth
-   BETTER_AUTH_SECRET="your-secret-key-here"
-   NEXT_PUBLIC_APP_URL="http://localhost:3000"
-   
-   # GitHub OAuth (optional)
-   GITHUB_CLIENT_ID="your-github-client-id"
-   GITHUB_CLIENT_SECRET="your-github-client-secret"
-   
-   # GigaChat API (provided)
-   GIGACHAT_CLIENT_ID="0199824b-4c1e-7ef1-b423-bb3156ddecee"
-   GIGACHAT_CLIENT_SECRET="46991ceb-e831-4b1a-b63a-25d18a37d5c7"
-   GIGACHAT_AUTHORIZATION_KEY="MDE5OTgyNGItNGMxZS03ZWYxLWI0MjMtYmIzMTU2ZGRlY2VlOjQ2OTkxY2ViLWU4MzEtNGIxYS1iNjNhLTI1ZDE4YTM3ZDVjNw=="
-   GIGACHAT_OAUTH_URL="https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
-   GIGACHAT_API_URL="https://gigachat.devices.sberbank.ru/api/v1"
-   GIGACHAT_SCOPE="GIGACHAT_API_PERS"
-   ```
+## 🔐 Система авторизации (Next.js 16)
 
-4. **Database setup**
-   ```bash
-   # Generate migrations
-   npx drizzle-kit generate
-   
-   # Apply migrations
-   npx drizzle-kit push
-   ```
+Проект использует современный подход к авторизации согласно [Next.js 16](https://nextjs.org/blog/next-16):
 
-5. **Start development server**
-   ```bash
-   npm run dev
-   ```
+### Архитектура безопасности
+- **proxy.ts** - Заменяет middleware.ts для четких сетевых границ
+- **Better Auth** - Современная библиотека аутентификации
+- **Защищенные маршруты** - Автоматическая проверка сессий
+- **API защита** - Все API endpoints требуют аутентификации
 
-## 🎯 Usage
+### Конфигурация безопасности
+```typescript
+// proxy.ts - защита маршрутов
+export const config = {
+  matcher: ['/workspace/:path*', '/api/projects/:path*', '/api/files/:path*']
+}
 
-1. **Landing Page**: Visit `http://localhost:3000`
-2. **Create Project**: Describe your project idea and click "Build with AI"
-3. **IDE Workspace**: Edit code with Monaco Editor
-4. **AI Assistant**: Use the right sidebar to chat with AI, explain code, or refactor
-5. **File Management**: Use the left sidebar to manage files and folders
+// lib/auth.ts - конфигурация Better Auth
+export const auth = betterAuth({
+  database: drizzleAdapter(db, { provider: 'pg' }),
+  emailAndPassword: { enabled: true },
+  socialProviders: { github: { clientId, clientSecret } },
+  session: { expiresIn: 60 * 60 * 24 * 7 }, // 7 дней
+  trustedOrigins: [process.env.NEXT_PUBLIC_APP_URL]
+})
+```
 
-## 📁 Project Structure
+## 📁 Структура проекта
 
 ```
 nocturide/
 ├── app/                    # Next.js App Router
-│   ├── page.tsx           # Landing page
-│   ├── layout.tsx         # Root layout
-│   ├── globals.css        # Global styles + Glassmorphism
-│   ├── auth/              # Authentication pages
-│   ├── workspace/         # IDE workspace
-│   └── api/               # API routes
+│   ├── page.tsx           # Главная страница
+│   ├── layout.tsx          # Корневой layout
+│   ├── globals.css         # Глобальные стили + Glassmorphism
+│   ├── not-found.tsx       # Страница 404
+│   ├── error.tsx           # Страница 500
+│   ├── auth/               # Страницы аутентификации
+│   ├── workspace/          # IDE рабочее пространство
+│   └── api/                # API маршруты
 ├── components/
-│   ├── landing/           # Landing page components
-│   ├── auth/              # Authentication components
-│   ├── ide/               # IDE components
-│   └── ui/                # shadcn/ui components
+│   ├── landing/            # Компоненты главной страницы
+│   ├── auth/               # Компоненты аутентификации
+│   ├── ide/                # Компоненты IDE
+│   └── ui/                 # shadcn/ui компоненты
 ├── lib/
-│   ├── auth.ts            # Better Auth configuration
-│   ├── db.ts              # Drizzle database connection
-│   ├── gigachat.ts        # GigaChat API integration
-│   └── validations.ts     # Zod validation schemas
+│   ├── auth.ts             # Конфигурация Better Auth
+│   ├── auth-client.ts      # Клиентская конфигурация
+│   ├── db.ts               # Подключение к базе данных
+│   ├── gigachat.ts         # Интеграция с GigaChat API
+│   └── validations.ts      # Zod схемы валидации
 ├── drizzle/
-│   └── schema.ts          # Database schema
-└── proxy.ts               # Next.js 16 proxy (replaces middleware)
+│   └── schema.ts           # Схема базы данных
+└── proxy.ts                # Next.js 16 proxy (заменяет middleware)
 ```
 
-## 🔑 API Endpoints
+## 🚀 Быстрый старт
 
-### Authentication
-- `POST /api/auth/sign-in/email` - Email magic link
-- `GET /api/auth/sign-in/social?provider=github` - GitHub OAuth
+### Предварительные требования
+- Node.js 18+ 
+- PostgreSQL база данных (Neon рекомендуется)
+- GigaChat API ключ
 
-### Projects
-- `GET /api/projects` - List user projects
-- `POST /api/projects` - Create new project
-- `GET /api/projects/[id]` - Get project details
-- `PUT /api/projects/[id]` - Update project
-- `DELETE /api/projects/[id]` - Delete project
+### Установка
 
-### Files
-- `GET /api/files?projectId=X` - List project files
-- `POST /api/files` - Create file/folder
-- `GET /api/files/[id]` - Get file content
-- `PUT /api/files/[id]` - Update file content
-- `DELETE /api/files/[id]` - Delete file
+1. **Клонируйте репозиторий**
+```bash
+git clone https://github.com/MagistrTheOne/nocturide.git
+cd nocturide
+```
 
-### AI Assistant
-- `POST /api/ai` - Send message to GigaChat API
+2. **Установите зависимости**
+```bash
+npm install
+```
 
-### WebContainer
-- `POST /api/webcontainer` - WebContainer operations (sync files, run commands, etc.)
+3. **Настройте переменные окружения**
+```bash
+cp .env.example .env.local
+```
 
-## 🎨 Features by Phase
+Заполните `.env.local`:
+```env
+# Database
+DATABASE_URL="postgresql://..."
 
-### ✅ Phase 1 (Completed)
-- Database setup with Drizzle ORM + Neon PostgreSQL
-- Better Auth authentication system
-- Landing page with glassmorphism design
-- IDE workspace with resizable panels
-- Monaco Editor integration
-- File management system
-- Projects and Files API
+# Better Auth
+BETTER_AUTH_SECRET="your-secret-key"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
-### ✅ Phase 2 (Completed)
-- GigaChat API integration
-- AI Assistant with chat interface
-- Code explanation, refactoring, and generation
-- Real-time AI responses
+# GitHub OAuth
+GITHUB_CLIENT_ID="your-github-client-id"
+GITHUB_CLIENT_SECRET="your-github-client-secret"
 
-### ✅ Phase 3 (Completed)
-- WebContainers API integration for real Node.js execution
-- xterm.js terminal with full interactive support
-- npm install/run commands with live output
-- File system synchronization between IDE and WebContainer
-- Process management and port handling
-- Real-time code execution in browser
+# GigaChat API
+GIGACHAT_API_KEY="your-gigachat-api-key"
+```
 
-## 🚀 Deployment
+4. **Настройте базу данных**
+```bash
+npm run db:push
+```
 
-1. **Build the application**
-   ```bash
-   npm run build
-   ```
+5. **Запустите проект**
+```bash
+npm run dev
+```
 
-2. **Deploy to Vercel** (recommended)
-   ```bash
-   npx vercel
-   ```
+Откройте [http://localhost:3000](http://localhost:3000) в браузере.
 
-3. **Set environment variables** in your deployment platform
+## 📚 Использование
 
-## 🤝 Contributing
+1. **Регистрация/Вход** - Создайте аккаунт или войдите через GitHub
+2. **Создание проекта** - Опишите желаемый проект на главной странице
+3. **Разработка** - Используйте встроенную IDE для редактирования кода
+4. **Терминал** - Выполняйте команды npm, git и другие
+5. **Развертывание** - Деплойте проекты на Vercel одним кликом
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+## 🔧 Разработка
 
-## 📄 License
+### Доступные команды
+```bash
+npm run dev          # Запуск в режиме разработки
+npm run build        # Сборка для продакшена
+npm run start        # Запуск продакшен сервера
+npm run db:push      # Обновление схемы БД
+npm run db:studio    # Открытие Drizzle Studio
+npm run lint         # Проверка кода
+```
 
-This project is licensed under the MIT License.
+### Особенности Next.js 16
+- **Turbopack** включен по умолчанию для быстрой разработки
+- **Cache Components** для оптимизации производительности
+- **Proxy.ts** для защиты маршрутов
+- **React 19.2** с новыми возможностями
 
-## 👨‍💻 Author
+## 🤝 Вклад в проект
 
-**MagistrTheOne** - *Initial work*
+Мы приветствуем вклад в развитие Nocturide! 
+
+1. Форкните репозиторий
+2. Создайте ветку для новой функции (`git checkout -b feature/amazing-feature`)
+3. Зафиксируйте изменения (`git commit -m 'Add amazing feature'`)
+4. Отправьте в ветку (`git push origin feature/amazing-feature`)
+5. Откройте Pull Request
+
+## 📞 Контакты
+
+- **Автор**: MagistrTheOne
+- **Email**: maxonyushko71@gmail.com
+- **Telegram**: [@MagistrTheOne](https://t.me/MagistrTheOne)
+- **GitHub**: [MagistrTheOne](https://github.com/MagistrTheOne)
+- **Локация**: Краснодар, Россия
+
+## 📄 Лицензия
+
+Этот проект лицензирован под MIT License - см. файл [LICENSE](LICENSE) для деталей.
 
 ---
 
-Built with ❤️ using Next.js 16, React 19.2, and GigaChat API
+**Сделано с ❤️ MagistrTheOne | 2025 | Краснодар**

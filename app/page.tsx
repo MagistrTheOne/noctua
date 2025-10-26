@@ -1,20 +1,33 @@
 import { HeroSection } from '@/components/landing/hero-section'
 import { NavigationBar } from '@/components/landing/navigation-bar'
 import { FeaturesGrid } from '@/components/landing/features-grid'
+import { AboutSection } from '@/components/landing/about-section'
+import { TemplatesSection } from '@/components/landing/templates-section'
+import { ContactSection } from '@/components/landing/contact-section'
+import { Footer } from '@/components/landing/footer'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-zinc-950 to-black">
+    <div className="min-h-screen bg-zinc-950">
       <NavigationBar />
-      <main className="container mx-auto px-4 py-16">
-        <HeroSection />
-        <FeaturesGrid />
+      <main>
+        <section className="min-h-screen flex items-center justify-center">
+          <HeroSection />
+        </section>
+        <section className="min-h-screen flex items-center justify-center">
+          <FeaturesGrid />
+        </section>
+        <section className="min-h-screen flex items-center justify-center">
+          <AboutSection />
+        </section>
+        <section className="min-h-screen flex items-center justify-center">
+          <TemplatesSection />
+        </section>
+        <section className="min-h-screen flex items-center justify-center">
+          <ContactSection />
+        </section>
       </main>
-      <footer className="border-t border-zinc-800/50 bg-zinc-950/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-8 text-center text-zinc-400">
-          <p>MagistrTheOne © 2025</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

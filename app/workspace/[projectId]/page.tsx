@@ -13,9 +13,7 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
   const { projectId } = await params
 
   const session = await auth.api.getSession({
-    headers: {
-      cookie: '',
-    },
+    headers: await import('next/headers').then(h => h.headers()),
   })
 
   if (!session) {

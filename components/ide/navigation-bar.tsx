@@ -30,7 +30,7 @@ interface NavigationBarProps {
     id: string
     email: string
     name: string | null
-    image: string | null
+    image: string | null | undefined
   }
   activeFile?: {
     id: string

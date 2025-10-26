@@ -25,8 +25,8 @@ interface TerminalProps {
     id: string
     name: string
     path: string
-    content: string
-    isDirectory: boolean
+    content: string | null
+    isDirectory: boolean | null
   }>
 }
 
@@ -148,8 +148,8 @@ export function Terminal({ onClose, projectId, files }: TerminalProps) {
       const fileTree = files.map(file => ({
         name: file.name,
         path: file.path,
-        content: file.content,
-        isDirectory: file.isDirectory,
+        content: file.content || '',
+        isDirectory: file.isDirectory || false,
       }))
 
       await webContainerManager.mountFiles(fileTree)

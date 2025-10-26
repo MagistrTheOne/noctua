@@ -3,13 +3,14 @@
 import { useEffect, useRef } from 'react'
 import { Editor } from '@monaco-editor/react'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import * as monaco from 'monaco-editor'
 
 interface MonacoEditorProps {
   file?: {
     id: string
     name: string
     path: string
-    content: string
+    content: string | null
     mimeType: string | null
   } | null
   onSave: (fileId: string, content: string) => void
@@ -17,7 +18,7 @@ interface MonacoEditorProps {
 
 export function MonacoEditor({ file, onSave }: MonacoEditorProps) {
   const editorRef = useRef<any>(null)
-  const saveTimeoutRef = useRef<NodeJS.Timeout>()
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const getLanguageFromFileName = (fileName: string, mimeType: string | null) => {
     if (mimeType) {
@@ -106,7 +107,7 @@ export function MonacoEditor({ file, onSave }: MonacoEditorProps) {
         <Editor
           height="100%"
           language={getLanguageFromFileName(file.name, file.mimeType)}
-          value={file.content}
+          value={file.content || ''}
           onMount={handleEditorDidMount}
           theme="vs-dark"
           options={{
@@ -127,7 +128,7 @@ export function MonacoEditor({ file, onSave }: MonacoEditorProps) {
             contextmenu: true,
             mouseWheelZoom: true,
             smoothScrolling: true,
-            cursorSmoothCaretAnimation: true,
+            cursorSmoothCaretAnimation: 'on',
             bracketPairColorization: { enabled: true },
             guides: {
               bracketPairs: true,

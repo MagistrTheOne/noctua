@@ -25,11 +25,11 @@ interface FileTreeProps {
     id: string
     name: string
     path: string
-    content: string
-    isDirectory: boolean
+    content: string | null
+    isDirectory: boolean | null
     projectId: string
     parentId: string | null
-    size: number
+    size: number | null
     mimeType: string | null
     createdAt: Date
     updatedAt: Date

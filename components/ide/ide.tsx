@@ -15,7 +15,7 @@ interface IDEProps {
     name: string
     description: string | null
     userId: string
-    isPublic: boolean
+    isPublic: boolean | null
     settings: any
     createdAt: Date
     updatedAt: Date
@@ -24,11 +24,11 @@ interface IDEProps {
     id: string
     name: string
     path: string
-    content: string
-    isDirectory: boolean
+    content: string | null
+    isDirectory: boolean | null
     projectId: string
     parentId: string | null
-    size: number
+    size: number | null
     mimeType: string | null
     createdAt: Date
     updatedAt: Date
@@ -37,7 +37,7 @@ interface IDEProps {
     id: string
     email: string
     name: string | null
-    image: string | null
+    image: string | null | undefined
   }
 }
 
@@ -81,7 +81,7 @@ export function IDE({ project, files, user }: IDEProps) {
         // Sync to WebContainer if terminal is open
         if (isTerminalOpen && isWebContainerReady) {
           const file = files.find(f => f.id === fileId)
-          if (file) {
+          if (file && file.path) {
             await webContainerManager.writeFile(file.path, content)
             console.log('File synced to WebContainer')
           }
