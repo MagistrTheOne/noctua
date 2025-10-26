@@ -120,3 +120,35 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Glassmorphism styles */
+.glass {
+  background: rgba(24, 24, 27, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(63, 63, 70, 0.4);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-card {
+  background: rgba(24, 24, 27, 0.8);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(63, 63, 70, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.glass-sidebar {
+  background: rgba(24, 24, 27, 0.9);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(63, 63, 70, 0.2);
+}
+
+.glass-navbar {
+  background: rgba(24, 24, 27, 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(63, 63, 70, 0.2);
+}

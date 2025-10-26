@@ -1,36 +1,196 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nocturide IDE
 
-## Getting Started
+Modern web-based development environment with AI assistance powered by GigaChat API.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Monaco Editor** - Full-featured code editor with syntax highlighting and IntelliSense
+- **AI Assistant** - Powered by GigaChat API for code explanations, refactoring, and generation
+- **File Management** - Drag & drop file tree with context menus
+- **Real-time Execution** - Terminal with WebContainers API (Phase 3)
+- **Glassmorphism UI** - Beautiful modern design with blur effects
+- **Authentication** - Better Auth with Email Magic Link + GitHub OAuth
+- **Database** - Neon PostgreSQL with Drizzle ORM
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 16, React 19.2, TypeScript
+- **Styling**: Tailwind CSS 4, Glassmorphism effects
+- **Database**: Neon PostgreSQL, Drizzle ORM
+- **Authentication**: Better Auth
+- **AI**: GigaChat API
+- **Editor**: Monaco Editor
+- **Terminal**: WebContainers API (Phase 3)
+
+## 📋 Prerequisites
+
+- Node.js 20.9+ (LTS)
+- PostgreSQL database (Neon recommended)
+- GigaChat API credentials
+
+## 🔧 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd nocturide
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment setup**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Fill in your environment variables:
+   ```env
+   # Database
+   DATABASE_URL="postgresql://username:password@hostname:port/database?sslmode=require"
+   
+   # Better Auth
+   BETTER_AUTH_SECRET="your-secret-key-here"
+   NEXT_PUBLIC_APP_URL="http://localhost:3000"
+   
+   # GitHub OAuth (optional)
+   GITHUB_CLIENT_ID="your-github-client-id"
+   GITHUB_CLIENT_SECRET="your-github-client-secret"
+   
+   # GigaChat API (provided)
+   GIGACHAT_CLIENT_ID="0199824b-4c1e-7ef1-b423-bb3156ddecee"
+   GIGACHAT_CLIENT_SECRET="46991ceb-e831-4b1a-b63a-25d18a37d5c7"
+   GIGACHAT_AUTHORIZATION_KEY="MDE5OTgyNGItNGMxZS03ZWYxLWI0MjMtYmIzMTU2ZGRlY2VlOjQ2OTkxY2ViLWU4MzEtNGIxYS1iNjNhLTI1ZDE4YTM3ZDVjNw=="
+   GIGACHAT_OAUTH_URL="https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
+   GIGACHAT_API_URL="https://gigachat.devices.sberbank.ru/api/v1"
+   GIGACHAT_SCOPE="GIGACHAT_API_PERS"
+   ```
+
+4. **Database setup**
+   ```bash
+   # Generate migrations
+   npx drizzle-kit generate
+   
+   # Apply migrations
+   npx drizzle-kit push
+   ```
+
+5. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+## 🎯 Usage
+
+1. **Landing Page**: Visit `http://localhost:3000`
+2. **Create Project**: Describe your project idea and click "Build with AI"
+3. **IDE Workspace**: Edit code with Monaco Editor
+4. **AI Assistant**: Use the right sidebar to chat with AI, explain code, or refactor
+5. **File Management**: Use the left sidebar to manage files and folders
+
+## 📁 Project Structure
+
+```
+nocturide/
+├── app/                    # Next.js App Router
+│   ├── page.tsx           # Landing page
+│   ├── layout.tsx         # Root layout
+│   ├── globals.css        # Global styles + Glassmorphism
+│   ├── auth/              # Authentication pages
+│   ├── workspace/         # IDE workspace
+│   └── api/               # API routes
+├── components/
+│   ├── landing/           # Landing page components
+│   ├── auth/              # Authentication components
+│   ├── ide/               # IDE components
+│   └── ui/                # shadcn/ui components
+├── lib/
+│   ├── auth.ts            # Better Auth configuration
+│   ├── db.ts              # Drizzle database connection
+│   ├── gigachat.ts        # GigaChat API integration
+│   └── validations.ts     # Zod validation schemas
+├── drizzle/
+│   └── schema.ts          # Database schema
+└── proxy.ts               # Next.js 16 proxy (replaces middleware)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔑 API Endpoints
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Authentication
+- `POST /api/auth/sign-in/email` - Email magic link
+- `GET /api/auth/sign-in/social?provider=github` - GitHub OAuth
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Projects
+- `GET /api/projects` - List user projects
+- `POST /api/projects` - Create new project
+- `GET /api/projects/[id]` - Get project details
+- `PUT /api/projects/[id]` - Update project
+- `DELETE /api/projects/[id]` - Delete project
 
-## Learn More
+### Files
+- `GET /api/files?projectId=X` - List project files
+- `POST /api/files` - Create file/folder
+- `GET /api/files/[id]` - Get file content
+- `PUT /api/files/[id]` - Update file content
+- `DELETE /api/files/[id]` - Delete file
 
-To learn more about Next.js, take a look at the following resources:
+### AI Assistant
+- `POST /api/ai` - Send message to GigaChat API
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 Features by Phase
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### ✅ Phase 1 (Completed)
+- Database setup with Drizzle ORM + Neon PostgreSQL
+- Better Auth authentication system
+- Landing page with glassmorphism design
+- IDE workspace with resizable panels
+- Monaco Editor integration
+- File management system
+- Projects and Files API
 
-## Deploy on Vercel
+### ✅ Phase 2 (Completed)
+- GigaChat API integration
+- AI Assistant with chat interface
+- Code explanation, refactoring, and generation
+- Real-time AI responses
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 🔄 Phase 3 (Planned)
+- WebContainers API for real terminal
+- npm install/run support
+- Live code execution
+- Package management
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 Deployment
+
+1. **Build the application**
+   ```bash
+   npm run build
+   ```
+
+2. **Deploy to Vercel** (recommended)
+   ```bash
+   npx vercel
+   ```
+
+3. **Set environment variables** in your deployment platform
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 👨‍💻 Author
+
+**MagistrTheOne** - *Initial work*
+
+---
+
+Built with ❤️ using Next.js 16, React 19.2, and GigaChat API
