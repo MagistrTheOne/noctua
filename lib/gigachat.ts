@@ -17,10 +17,6 @@ export class GigaChatAPI {
       
       if (fs.existsSync(certPath)) {
         process.env.NODE_EXTRA_CA_CERTS = certPath
-        console.log('✅ Russian trusted root CA certificate loaded:', certPath)
-      } else {
-        console.warn('⚠️ Russian trusted root CA certificate not found at:', certPath)
-        console.warn('⚠️ GigaChat API may not work without proper certificates')
       }
     } catch (error) {
       console.error('❌ Error setting up certificates:', error)
@@ -308,11 +304,73 @@ Generate complete, working code. Include all necessary dependencies, configurati
   }
 
   /**
+   * Улучшает промпт пользователя для более детальной генерации
+   */
+  async improvePrompt(prompt: string): Promise<string> {
+    try {
+      const data = await this.makeGigaChatRequest('/api/v1/chat/completions', {
+        model: 'GigaChat',
+        messages: [
+          {
+            role: 'system',
+            content: `Ты эксперт по созданию технических заданий для разработки ПО. 
+Твоя задача - улучшить и расширить промпт пользователя для более детальной генерации проекта.
+
+Правила улучшения:
+1. Добавь конкретные технологии и фреймворки
+2. Укажи архитектуру и структуру проекта
+3. Добавь требования к UI/UX
+4. Включи функциональные требования
+5. Укажи тип приложения (веб, мобильное, десктоп)
+6. Добавь требования к производительности и масштабируемости
+7. Сохрани оригинальную идею пользователя
+
+Ответь ТОЛЬКО улучшенным промптом, без дополнительных объяснений.`
+          },
+          {
+            role: 'user',
+            content: `Улучши этот промпт для более детальной генерации проекта: "${prompt}"`
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000,
+      })
+
+      return data.choices[0]?.message?.content || prompt
+    } catch (error) {
+      console.error('Error improving prompt:', error)
+      return prompt // Возвращаем оригинальный промпт при ошибке
+    }
+  }
+
+  /**
    * Получает список доступных моделей GigaChat
    */
   async getModels(): Promise<any> {
     try {
-      const data = await this.makeGigaChatRequest('/api/v1/models', {})
+      const token = await this.getAccessToken()
+      const fullUrl = `${process.env.GIGACHAT_API_URL}/api/v1/models`
+      
+      console.log('Getting GigaChat models from:', fullUrl)
+      
+      const response = await fetch(fullUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+
+      console.log('Models response status:', response.status)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Models error response:', errorText)
+        throw new Error(`Failed to get models: ${response.status} ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      console.log('Models response data:', data)
       return data
     } catch (error) {
       console.error('Error getting GigaChat models:', error)

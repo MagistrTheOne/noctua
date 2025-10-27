@@ -41,7 +41,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Получаем данные из запроса
-    const body = await request.json()
+    let body
+    try {
+      body = await request.json()
+    } catch (parseError) {
+      console.error('❌ JSON parse error:', parseError)
+      console.error('Request body:', await request.text())
+      return NextResponse.json(
+        {
+          error: 'Неверный формат JSON',
+          message: 'Пожалуйста, проверьте формат запроса'
+        },
+        { status: 400 }
+      )
+    }
+    
     const { prompt } = body
 
     if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {

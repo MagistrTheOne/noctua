@@ -11,6 +11,7 @@ import { useInView } from '@/hooks/use-in-view'
 export function HeroSection() {
   const [prompt, setPrompt] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isImproving, setIsImproving] = useState(false)
   const [currentPlaceholderIndex, setCurrentPlaceholderIndex] = useState(0)
   const [displayedPlaceholder, setDisplayedPlaceholder] = useState('')
   const [isTyping, setIsTyping] = useState(true)
@@ -32,6 +33,7 @@ export function HeroSection() {
     "Сделай дашборд с графиками и аналитикой для бизнеса",
     "Создай блог с системой комментариев и управлением контентом",
     "Построй CRM систему для управления клиентами и продажами"
+    "Сделай сайт портфолио(React,next)"
   ]
 
   // Эффект анимации заголовка
@@ -86,15 +88,15 @@ export function HeroSection() {
     }
   }, [displayedPlaceholder, isTyping, currentPlaceholderIndex, promptExamples])
 
-  const handleGenerate = async () => {
+  const handleImprovePrompt = async () => {
     if (!prompt.trim()) {
       toast.error('Пожалуйста, введите описание проекта')
       return
     }
 
-    setIsLoading(true)
+    setIsImproving(true)
     try {
-      const response = await fetch('/api/demo/generate', {
+      const response = await fetch('/api/ai/improve-prompt', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,21 +106,17 @@ export function HeroSection() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Ошибка генерации проекта')
+        throw new Error(errorData.error || 'Ошибка улучшения промпта')
       }
 
       const data = await response.json()
-      
-      // Показываем уведомление об успехе
-      toast.success(`Проект "${data.name}" сгенерирован!`)
-      
-      // Перенаправляем на демо страницу с результатом
-      router.push(`/demo?project=${encodeURIComponent(JSON.stringify(data))}`)
+      setPrompt(data.improvedPrompt)
+      toast.success('Промпт улучшен! Теперь можно генерировать проект.')
     } catch (error) {
-      console.error('Generation error:', error)
-      toast.error('Ошибка при генерации проекта. Попробуйте еще раз.')
+      console.error('Improve prompt error:', error)
+      toast.error('Ошибка при улучшении промпта. Попробуйте еще раз.')
     } finally {
-      setIsLoading(false)
+      setIsImproving(false)
     }
   }
 
@@ -148,20 +146,37 @@ export function HeroSection() {
                   className="min-h-[140px] bg-zinc-900/30 border-zinc-700/50 text-zinc-100 placeholder:text-zinc-500 resize-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
                   disabled={isLoading}
                 />
-                <Button
-                  onClick={handleGenerate}
-                  disabled={isLoading || !prompt.trim()}
-                  className="w-full bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <div className="flex items-center space-x-3">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Генерируем проект...</span>
-                    </div>
-                  ) : (
-                    'Начать создавать'
-                  )}
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    onClick={handleImprovePrompt}
+                    disabled={isImproving || !prompt.trim()}
+                    variant="outline"
+                    className="w-full sm:w-auto border-zinc-600/50 text-zinc-300 hover:bg-zinc-800/50 hover:text-zinc-100 font-semibold py-4 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isImproving ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 border-2 border-zinc-400/30 border-t-zinc-400 rounded-full animate-spin" />
+                        <span>Улучшаем...</span>
+                      </div>
+                    ) : (
+                      'Улучшить промпт'
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handleGenerate}
+                    disabled={isLoading || !prompt.trim()}
+                    className="w-full sm:w-auto bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center space-x-3">
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Генерируем проект...</span>
+                      </div>
+                    ) : (
+                      'Начать создавать'
+                    )}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

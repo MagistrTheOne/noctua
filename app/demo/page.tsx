@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { ProjectPreview } from '@/components/demo/project-preview'
+import { MonacoCodeEditor } from '@/components/demo/monaco-editor'
 import { Sparkles, Clock, Users, TrendingUp, ArrowRight, Zap, Code, FileText, Play } from 'lucide-react'
 import Link from 'next/link'
 
@@ -42,6 +43,7 @@ export default function DemoPage() {
   } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
+  const [projectFiles, setProjectFiles] = useState<Array<{name: string, content: string}>>([])
 
   // Обработка проекта из URL параметров (при переходе с Hero Section)
   useEffect(() => {
@@ -119,12 +121,13 @@ export default function DemoPage() {
         setRateLimitInfo(data.rateLimitInfo)
       }
 
+      // Подготавливаем файлы для Monaco Editor
+      const files = getAllFiles(data.files)
+      setProjectFiles(files)
+
       // Выбираем первый файл для отображения
-      if (data.files && data.files.length > 0) {
-        const firstFile = data.files.find((file: any) => file.type === 'file')
-        if (firstFile) {
-          setSelectedFile(firstFile.name)
-        }
+      if (files.length > 0) {
+        setSelectedFile(files[0].name)
       }
 
     } catch (error) {
@@ -135,34 +138,13 @@ export default function DemoPage() {
     }
   }
 
-  const getFileContent = (fileName: string): string => {
-    if (!generatedProject?.files) return ''
-    
-    const findFileContent = (files: any[]): string => {
-      for (const file of files) {
-        if (file.name === fileName && file.content) {
-          return file.content
-        }
-        if (file.children) {
-          const found = findFileContent(file.children)
-          if (found) return found
-        }
-      }
-      return ''
-    }
-    
-    return findFileContent(generatedProject.files)
-  }
-
-  const getAllFiles = (): Array<{name: string, content: string}> => {
-    if (!generatedProject?.files) return []
-    
-    const files: Array<{name: string, content: string}> = []
+  const getAllFiles = (files: any[]): Array<{name: string, content: string}> => {
+    const result: Array<{name: string, content: string}> = []
     
     const collectFiles = (fileList: any[], path = '') => {
       for (const file of fileList) {
         if (file.type === 'file' && file.content) {
-          files.push({
+          result.push({
             name: path ? `${path}/${file.name}` : file.name,
             content: file.content
           })
@@ -173,8 +155,16 @@ export default function DemoPage() {
       }
     }
     
-    collectFiles(generatedProject.files)
-    return files
+    collectFiles(files)
+    return result
+  }
+
+  const handleCodeChange = (fileName: string, content: string) => {
+    setProjectFiles(prev => 
+      prev.map(file => 
+        file.name === fileName ? { ...file, content } : file
+      )
+    )
   }
 
   return (
@@ -351,42 +341,14 @@ export default function DemoPage() {
                   </CardContent>
                 </Card>
 
-                {/* Code Editor */}
-                <Card className="glass-card">
-                  <CardHeader>
-                    <CardTitle className="text-zinc-100">Код проекта</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {/* File Selector */}
-                      <div className="flex space-x-2 overflow-x-auto pb-2">
-                        {getAllFiles().map((file, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setSelectedFile(file.name)}
-                            className={`px-3 py-1 rounded text-sm whitespace-nowrap transition-colors ${
-                              selectedFile === file.name
-                                ? 'bg-blue-600/20 text-blue-400 border border-blue-500/50'
-                                : 'bg-zinc-800/50 text-zinc-400 hover:bg-zinc-700/50'
-                            }`}
-                          >
-                            {file.name}
-                          </button>
-                        ))}
-                      </div>
-
-                      {/* Monaco Editor Placeholder */}
-                      <div className="bg-zinc-900 rounded-lg border border-zinc-700/50 min-h-[400px] p-4">
-                        <div className="text-zinc-500 text-sm mb-2">
-                          Monaco Editor будет здесь
-                        </div>
-                        <pre className="text-zinc-300 text-sm overflow-auto max-h-[350px]">
-                          {selectedFile ? getFileContent(selectedFile) : 'Выберите файл для просмотра'}
-                        </pre>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                {/* Monaco Code Editor */}
+                <MonacoCodeEditor
+                  files={projectFiles}
+                  selectedFile={selectedFile}
+                  onFileSelect={setSelectedFile}
+                  onCodeChange={handleCodeChange}
+                  readOnly={false}
+                />
               </>
             ) : (
               <Card className="glass-card">
