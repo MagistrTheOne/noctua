@@ -1,3 +1,5 @@
+'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from 'next-intl'
 import { useInView } from '@/hooks/use-in-view'
@@ -40,7 +42,7 @@ export function FeaturesGrid() {
   ]
 
   return (
-    <div ref={ref as any} className={`container mx-auto px-4 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
+    <div ref={ref} className={`container mx-auto px-4 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
       <div className="text-center space-y-4 mb-12">
         <h2 className="text-4xl font-bold text-white">{t('title')}</h2>
         <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
@@ -60,7 +62,7 @@ export function FeaturesGrid() {
             <CardHeader className="pb-3">
               <div className="flex items-center space-x-3 mb-2">
                 <div className="text-2xl">{feature.icon}</div>
-                <CardTitle className="text-white text-lg">{feature.title}</CardTitle>
+              <CardTitle className="text-white text-lg">{feature.title}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>

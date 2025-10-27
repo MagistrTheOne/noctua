@@ -37,7 +37,7 @@ export function ComparisonTable() {
   ]
 
   return (
-    <div ref={ref as any} className={`container mx-auto px-4 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
+    <div ref={ref} className={`container mx-auto px-4 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold text-white mb-4">{t('title')}</h2>
         <p className="text-lg text-zinc-400 max-w-2xl mx-auto">

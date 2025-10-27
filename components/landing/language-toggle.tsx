@@ -16,9 +16,8 @@ export function LanguageToggle() {
     const newLocale = locale === 'ru' ? 'en' : 'ru'
 
     startTransition(() => {
-      // Убираем текущий locale из пути и добавляем новый
-      const newPath = pathname.replace(`/${locale}`, '') || '/'
-      router.push(`/${newLocale}${newPath}`)
+      // Поскольку используем localePrefix: 'always', переходим на URL с префиксом
+      router.push(`/${newLocale}${pathname === '/' ? '' : pathname}`)
     })
   }
 

@@ -1,12 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import createMiddleware from 'next-intl/middleware'
+import { middlewareConfig } from './i18n'
+
+// i18n middleware для поддержки мультиязычности без префиксов
+const i18nMiddleware = createMiddleware(middlewareConfig)
 
 export const config = {
-  matcher: ['/workspace/:path*', '/api/projects/:path*', '/api/files/:path*', '/api/webcontainer/:path*'],
+  matcher: [
+    // Auth protected routes
+    '/workspace/:path*',
+    '/api/projects/:path*',
+    '/api/files/:path*',
+    '/api/webcontainer/:path*',
+    // i18n routes with locale prefixes
+    '/',
+    '/(ru|en)',
+    '/(ru|en)/:path*',
+    '/((?!api|_next/static|_next/image|favicon.ico).*)'
+  ],
 }
 
 export default async function proxy(request: NextRequest) {
-  // Защита /workspace/* routes
+  // Сначала проверяем аутентификацию для защищенных роутов
   if (request.nextUrl.pathname.startsWith('/workspace')) {
     try {
       const token = await getToken({ req: request })
@@ -20,7 +36,7 @@ export default async function proxy(request: NextRequest) {
     }
   }
 
-  // Защита API роутов (дополнительная проверка)
+  // Защита API роутов
   if (request.nextUrl.pathname.startsWith('/api/projects') ||
       request.nextUrl.pathname.startsWith('/api/files') ||
       request.nextUrl.pathname.startsWith('/api/webcontainer')) {
@@ -36,5 +52,6 @@ export default async function proxy(request: NextRequest) {
     }
   }
 
-  return NextResponse.next()
+  // Затем применяем i18n middleware для всех остальных роутов
+  return i18nMiddleware(request)
 }

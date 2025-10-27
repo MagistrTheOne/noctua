@@ -42,7 +42,7 @@ export function SignUpForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.name,
+        name: formData.name,
           email: formData.email,
           password: formData.password,
         }),

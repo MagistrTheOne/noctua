@@ -13,3 +13,11 @@ export default getRequestConfig(async ({ locale }) => {
     messages: (await import(`./locales/${locale}.json`)).default
   }
 })
+
+// Middleware config for next-intl
+export const middlewareConfig = {
+  locales,
+  defaultLocale: 'ru' as const,
+  localePrefix: 'always' as const,
+  localeDetection: true
+}

@@ -1,3 +1,5 @@
+'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslations } from 'next-intl'
 import { useInView } from '@/hooks/use-in-view'
@@ -14,7 +16,7 @@ export function AboutSection() {
   ]
 
   return (
-    <div ref={ref as any} className={`container mx-auto px-4 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
+    <div ref={ref} className={`container mx-auto px-4 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
       <div className="text-center space-y-4 mb-12">
         <h2 className="text-4xl font-bold text-white">{t('title')}</h2>
         <p className="text-lg text-zinc-400 max-w-3xl mx-auto">

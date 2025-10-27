@@ -114,7 +114,7 @@ export function HeroSection() {
   }
 
   return (
-    <div ref={ref as any} className={`relative container mx-auto px-4 text-center space-y-8 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
+    <div ref={ref} className={`relative container mx-auto px-4 text-center space-y-8 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
       {/* Parallax background elements */}
       <div
         className="absolute inset-0 pointer-events-none overflow-hidden"

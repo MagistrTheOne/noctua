@@ -100,32 +100,21 @@ export function generateStaticParams() {
 
 export default async function RootLayout({
   children,
-  params: { locale }
 }: Readonly<{
   children: React.ReactNode;
-  params: { locale: string };
 }>) {
-  // Ensure that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
-
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
-
   return (
-    <html lang={locale} className="dark">
+    <html lang="ru" className="dark">
       <head>
         <JSONLD />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NextIntlClientProvider messages={messages}>
-          <AuthProvider>
-            <Analytics />
-            {children}
-          </AuthProvider>
-        </NextIntlClientProvider>
+        <AuthProvider>
+          <Analytics />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

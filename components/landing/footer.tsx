@@ -43,7 +43,7 @@ export function Footer() {
   ]
 
   return (
-    <footer ref={ref as any} className="border-t border-zinc-800/50 bg-zinc-950/50 backdrop-blur-sm">
+    <footer ref={ref} className="border-t border-zinc-800/50 bg-zinc-950/50 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Brand Section */}
