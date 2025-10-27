@@ -1,16 +1,49 @@
 // GigaChat API integration
+import fs from 'fs'
+import path from 'path'
+
 export class GigaChatAPI {
   private accessToken: string | null = null
   private tokenExpiresAt: number = 0
 
+  constructor() {
+    // Настройка сертификатов Минцифры для Node.js
+    this.setupCertificates()
+  }
+
+  private setupCertificates() {
+    try {
+      const certPath = path.resolve(process.cwd(), 'certs', 'russian_trusted_root_ca_pem.crt')
+      
+      if (fs.existsSync(certPath)) {
+        process.env.NODE_EXTRA_CA_CERTS = certPath
+        console.log('✅ Russian trusted root CA certificate loaded:', certPath)
+      } else {
+        console.warn('⚠️ Russian trusted root CA certificate not found at:', certPath)
+        console.warn('⚠️ GigaChat API may not work without proper certificates')
+      }
+    } catch (error) {
+      console.error('❌ Error setting up certificates:', error)
+    }
+  }
+
   private async getAccessToken(): Promise<string> {
     // Check if we have a valid token
     if (this.accessToken && Date.now() < this.tokenExpiresAt) {
+      console.log('Using existing GigaChat token')
       return this.accessToken
     }
 
+    console.log('Requesting new GigaChat access token...')
+    console.log('OAuth URL:', process.env.GIGACHAT_OAUTH_URL)
+    console.log('Authorization Key:', process.env.GIGACHAT_AUTHORIZATION_KEY ? 'Present' : 'Missing')
+    console.log('Scope:', process.env.GIGACHAT_SCOPE)
+
     try {
-      const response = await fetch(process.env.GIGACHAT_OAUTH_URL!, {
+      const oauthUrl = process.env.GIGACHAT_OAUTH_URL!
+      console.log('Attempting OAuth request to:', oauthUrl)
+      
+      const response = await fetch(oauthUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -21,13 +54,22 @@ export class GigaChatAPI {
         body: new URLSearchParams({
           scope: process.env.GIGACHAT_SCOPE!,
         }),
+        // Добавляем timeout и игнорируем SSL ошибки для тестирования
+        signal: AbortSignal.timeout(10000), // 10 секунд timeout
       })
 
+      console.log('OAuth response status:', response.status)
+      console.log('OAuth response headers:', Object.fromEntries(response.headers.entries()))
+
       if (!response.ok) {
-        throw new Error(`Failed to get access token: ${response.statusText}`)
+        const errorText = await response.text()
+        console.error('OAuth error response:', errorText)
+        throw new Error(`Failed to get access token: ${response.status} ${response.statusText}`)
       }
 
       const data = await response.json()
+      console.log('OAuth response data:', data)
+      
       this.accessToken = data.access_token
       this.tokenExpiresAt = Date.now() + (data.expires_in * 1000) - 60000 // 1 minute buffer
       
@@ -35,6 +77,7 @@ export class GigaChatAPI {
         throw new Error('No access token received from GigaChat')
       }
       
+      console.log('Successfully obtained GigaChat token, expires in:', data.expires_in, 'seconds')
       return this.accessToken
     } catch (error) {
       console.error('Error getting GigaChat access token:', error)
@@ -48,8 +91,12 @@ export class GigaChatAPI {
   private async makeGigaChatRequest(endpoint: string, body: any, retryCount = 0): Promise<any> {
     try {
       const token = await this.getAccessToken()
+      const fullUrl = `${process.env.GIGACHAT_API_URL}${endpoint}`
       
-      const response = await fetch(`${process.env.GIGACHAT_API_URL}${endpoint}`, {
+      console.log('Making GigaChat request to:', fullUrl)
+      console.log('Request body:', JSON.stringify(body, null, 2))
+      
+      const response = await fetch(fullUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,6 +105,9 @@ export class GigaChatAPI {
         },
         body: JSON.stringify(body),
       })
+
+      console.log('GigaChat response status:', response.status)
+      console.log('GigaChat response headers:', Object.fromEntries(response.headers.entries()))
 
       // Если 401 и это первый запрос, обновляем токен и повторяем
       if (response.status === 401 && retryCount === 0) {
@@ -68,10 +118,14 @@ export class GigaChatAPI {
       }
 
       if (!response.ok) {
+        const errorText = await response.text()
+        console.error('GigaChat API error response:', errorText)
         throw new Error(`GigaChat API error: ${response.status} ${response.statusText}`)
       }
 
-      return await response.json()
+      const data = await response.json()
+      console.log('GigaChat response data:', data)
+      return data
     } catch (error) {
       console.error('Error making GigaChat request:', error)
       throw error
@@ -249,6 +303,19 @@ Generate complete, working code. Include all necessary dependencies, configurati
       }
     } catch (error) {
       console.error('Error generating project with GigaChat:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Получает список доступных моделей GigaChat
+   */
+  async getModels(): Promise<any> {
+    try {
+      const data = await this.makeGigaChatRequest('/api/v1/models', {})
+      return data
+    } catch (error) {
+      console.error('Error getting GigaChat models:', error)
       throw error
     }
   }

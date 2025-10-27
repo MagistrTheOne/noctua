@@ -115,7 +115,7 @@ export function NavigationBar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Контакты
-            </Link>
+                </Link>
           </div>
         </div>
       </div>

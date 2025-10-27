@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { ProjectPreview } from '@/components/demo/project-preview'
-import { Sparkles, Clock, Users, TrendingUp, ArrowRight, Zap } from 'lucide-react'
+import { Sparkles, Clock, Users, TrendingUp, ArrowRight, Zap, Code, FileText, Play } from 'lucide-react'
 import Link from 'next/link'
 
 interface GeneratedProject {
@@ -26,6 +26,8 @@ interface GeneratedProject {
     resetAt: number
     limit: number
   }
+  source?: 'template' | 'gigachat' | 'fallback'
+  techStack?: string[]
 }
 
 export default function DemoPage() {
@@ -39,6 +41,7 @@ export default function DemoPage() {
     limit: number
   } | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [selectedFile, setSelectedFile] = useState<string | null>(null)
 
   // Обработка проекта из URL параметров (при переходе с Hero Section)
   useEffect(() => {
@@ -69,26 +72,24 @@ export default function DemoPage() {
 
   // Загружаем информацию о rate limit при монтировании
   useEffect(() => {
-    fetchRateLimitInfo()
+    const fetchRateLimit = async () => {
+      try {
+        const response = await fetch('/api/demo/generate')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.rateLimitInfo) {
+            setRateLimitInfo(data.rateLimitInfo)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching rate limit:', error)
+      }
+    }
+
+    fetchRateLimit()
   }, [])
 
-  const fetchRateLimitInfo = async () => {
-    try {
-      const response = await fetch('/api/demo/generate')
-      if (response.ok) {
-        const data = await response.json()
-        setRateLimitInfo({
-          remaining: data.remaining,
-          resetAt: data.resetAt,
-          limit: data.limit
-        })
-      }
-    } catch (err) {
-      console.error('Failed to fetch rate limit info:', err)
-    }
-  }
-
-  const generateProject = async () => {
+  const handleGenerate = async () => {
     if (!prompt.trim()) {
       setError('Пожалуйста, введите описание проекта')
       return
@@ -106,210 +107,306 @@ export default function DemoPage() {
         body: JSON.stringify({ prompt }),
       })
 
-      const data = await response.json()
-
       if (!response.ok) {
-        if (response.status === 429) {
-          setError(`Превышен лимит запросов. Попробуйте через ${Math.ceil(data.retryAfter / 60)} минут.`)
-        } else {
-          setError(data.message || 'Ошибка генерации проекта')
-        }
-        return
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Ошибка генерации проекта')
       }
 
+      const data = await response.json()
       setGeneratedProject(data)
-      setRateLimitInfo(data.rateLimitInfo)
-    } catch (err) {
-      setError('Ошибка при генерации проекта. Попробуйте еще раз.')
+      
+      if (data.rateLimitInfo) {
+        setRateLimitInfo(data.rateLimitInfo)
+      }
+
+      // Выбираем первый файл для отображения
+      if (data.files && data.files.length > 0) {
+        const firstFile = data.files.find((file: any) => file.type === 'file')
+        if (firstFile) {
+          setSelectedFile(firstFile.name)
+        }
+      }
+
+    } catch (error) {
+      console.error('Generation error:', error)
+      setError(error instanceof Error ? error.message : 'Ошибка генерации проекта')
     } finally {
       setIsGenerating(false)
     }
   }
 
-  const formatTimeRemaining = (resetAt: number) => {
-    const now = Date.now()
-    const remaining = Math.max(0, resetAt - now)
-    const minutes = Math.ceil(remaining / (1000 * 60))
-    return `${minutes} мин`
+  const getFileContent = (fileName: string): string => {
+    if (!generatedProject?.files) return ''
+    
+    const findFileContent = (files: any[]): string => {
+      for (const file of files) {
+        if (file.name === fileName && file.content) {
+          return file.content
+        }
+        if (file.children) {
+          const found = findFileContent(file.children)
+          if (found) return found
+        }
+      }
+      return ''
+    }
+    
+    return findFileContent(generatedProject.files)
+  }
+
+  const getAllFiles = (): Array<{name: string, content: string}> => {
+    if (!generatedProject?.files) return []
+    
+    const files: Array<{name: string, content: string}> = []
+    
+    const collectFiles = (fileList: any[], path = '') => {
+      for (const file of fileList) {
+        if (file.type === 'file' && file.content) {
+          files.push({
+            name: path ? `${path}/${file.name}` : file.name,
+            content: file.content
+          })
+        }
+        if (file.children) {
+          collectFiles(file.children, path ? `${path}/${file.name}` : file.name)
+        }
+      }
+    }
+    
+    collectFiles(generatedProject.files)
+    return files
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-zinc-950 via-neutral-950 to-black">
+    <div className="min-h-screen bg-zinc-950">
       {/* Header */}
+      <div className="border-b border-zinc-800/50 bg-zinc-900/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Link href="/" className="text-xl font-bold text-zinc-100 hover:text-white transition-colors">
+                Nocturide
+              </Link>
+              <Badge variant="outline" className="border-blue-500/50 text-blue-400">
+                AI Demo
+              </Badge>
+            </div>
+            
+            {rateLimitInfo && (
+              <div className="flex items-center space-x-4 text-sm text-zinc-400">
+                <div className="flex items-center space-x-2">
+                  <Clock className="h-4 w-4" />
+                  <span>Осталось: {rateLimitInfo.remaining}/{rateLimitInfo.limit}</span>
+                </div>
+                <div className="text-zinc-500">
+                  Сброс: {new Date(rateLimitInfo.resetAt).toLocaleTimeString('ru-RU')}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center space-y-4 mb-8">
-          <h1 className="text-4xl md:text-6xl font-bold text-zinc-100">
-            Попробуйте{' '}
-            <span className="bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-              AI-генерацию
-            </span>{' '}
-            кода
-          </h1>
-          <p className="text-xl text-zinc-400 max-w-3xl mx-auto">
-            Создавайте полнофункциональные приложения с помощью искусственного интеллекта. 
-            Просто опишите, что хотите создать, и получите готовый код за секунды.
-          </p>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card className="glass-card">
-            <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center mb-2">
-                <Users className="w-8 h-8 text-blue-500" />
-              </div>
-              <div className="text-2xl font-bold text-zinc-100">5K+</div>
-              <div className="text-sm text-zinc-400">Активных разработчиков</div>
-            </CardContent>
-          </Card>
-          <Card className="glass-card">
-            <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center mb-2">
-                <TrendingUp className="w-8 h-8 text-green-500" />
-              </div>
-              <div className="text-2xl font-bold text-zinc-100">10K+</div>
-              <div className="text-sm text-zinc-400">Проектов создано</div>
-            </CardContent>
-          </Card>
-          <Card className="glass-card">
-            <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center mb-2">
-                <Zap className="w-8 h-8 text-purple-500" />
-              </div>
-              <div className="text-2xl font-bold text-zinc-100">1M+</div>
-              <div className="text-sm text-zinc-400">Строк кода сгенерировано</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Input Section */}
+          {/* Left Panel - Input */}
           <div className="space-y-6">
             <Card className="glass-card">
               <CardHeader>
-                <CardTitle className="text-xl text-zinc-100">Опишите ваш проект</CardTitle>
+                <CardTitle className="flex items-center space-x-2 text-zinc-100">
+                  <Sparkles className="h-5 w-5 text-blue-400" />
+                  <span>AI Генератор проектов</span>
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Textarea
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Например: Создай приложение для управления задачами с React, TypeScript и Tailwind CSS..."
-                  className="min-h-[120px] bg-zinc-900/30 border-zinc-700/50 text-zinc-100 placeholder:text-zinc-500 resize-none"
-                />
-                
-                {/* Examples */}
+                <div>
+                  <Textarea
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    placeholder="Опишите проект, который хотите создать..."
+                    className="min-h-[120px] bg-zinc-900/30 border-zinc-700/50 text-zinc-100 placeholder:text-zinc-500 resize-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
+                    disabled={isGenerating}
+                  />
+                </div>
+
                 <div className="space-y-2">
-                  <p className="text-sm text-zinc-400">Примеры:</p>
-                  <div className="space-y-1">
+                  <p className="text-sm text-zinc-400">Примеры запросов:</p>
+                  <div className="flex flex-wrap gap-2">
                     {promptExamples.slice(0, 3).map((example, index) => (
                       <button
                         key={index}
                         onClick={() => setPrompt(example)}
-                        className="block w-full text-left text-sm text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 p-2 rounded transition-colors"
+                        className="text-xs bg-zinc-800/50 hover:bg-zinc-700/50 text-zinc-300 px-3 py-1 rounded transition-colors"
+                        disabled={isGenerating}
                       >
-                        • {example}
+                        {example}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Rate Limit Info */}
-                {rateLimitInfo && (
-                  <div className="p-3 bg-zinc-800/50 rounded-lg">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-400">Лимит демо:</span>
-                      <span className="text-zinc-300">
-                        {rateLimitInfo.remaining} из {rateLimitInfo.limit} генераций
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm mt-1">
-                      <span className="text-zinc-400">Обновится через:</span>
-                      <span className="text-zinc-300">
-                        {formatTimeRemaining(rateLimitInfo.resetAt)}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Error */}
-                {error && (
-                  <div className="p-3 bg-red-600/10 border border-red-600/20 rounded-lg">
-                    <p className="text-sm text-red-400">{error}</p>
-                  </div>
-                )}
-
                 <Button
-                  onClick={generateProject}
-                  disabled={isGenerating || !prompt.trim() || (rateLimitInfo?.remaining === 0)}
-                  className="w-full bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handleGenerate}
+                  disabled={isGenerating || !prompt.trim()}
+                  className="w-full bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
                 >
                   {isGenerating ? (
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Генерируем проект...</span>
-                    </div>
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Генерируем...
+                    </>
                   ) : (
-                    <div className="flex items-center space-x-2">
-                      <Sparkles className="w-4 h-4" />
-                      <span>Сгенерировать проект</span>
-                    </div>
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Сгенерировать проект
+                    </>
                   )}
                 </Button>
 
-                {/* CTA */}
-                <div className="text-center">
-                  <Link
-                    href="/auth/signup"
-                    className="inline-flex items-center space-x-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
-                  >
-                    <span>Зарегистрируйтесь для неограниченного доступа</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
+                {error && (
+                  <div className="p-3 bg-red-900/20 border border-red-500/50 rounded-lg">
+                    <p className="text-red-400 text-sm">{error}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Features */}
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle className="text-zinc-100">Возможности демо</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-2 text-zinc-400">
+                    <Code className="h-4 w-4 text-blue-400" />
+                    <span className="text-sm">Monaco Editor</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-zinc-400">
+                    <FileText className="h-4 w-4 text-green-400" />
+                    <span className="text-sm">Syntax Highlight</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-zinc-400">
+                    <Play className="h-4 w-4 text-purple-400" />
+                    <span className="text-sm">Live Preview</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-zinc-400">
+                    <Zap className="h-4 w-4 text-yellow-400" />
+                    <span className="text-sm">AI Generation</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Preview Section */}
-          <div className="h-[600px]">
-            <ProjectPreview project={generatedProject} isLoading={isGenerating} />
-          </div>
-        </div>
+          {/* Right Panel - Project Preview */}
+          <div className="space-y-6">
+            {generatedProject ? (
+              <>
+                {/* Project Info */}
+                <Card className="glass-card">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-zinc-100">{generatedProject.name}</CardTitle>
+                      <div className="flex items-center space-x-2">
+                        {generatedProject.source === 'template' && (
+                          <Badge className="bg-green-600/20 text-green-400 border-green-500/50">
+                            Шаблон
+                          </Badge>
+                        )}
+                        {generatedProject.source === 'gigachat' && (
+                          <Badge className="bg-purple-600/20 text-purple-400 border-purple-500/50">
+                            AI генерация
+                          </Badge>
+                        )}
+                        {generatedProject.source === 'fallback' && (
+                          <Badge className="bg-yellow-600/20 text-yellow-400 border-yellow-500/50">
+                            Fallback
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-zinc-400 mb-4">{generatedProject.description}</p>
+                    
+                    {generatedProject.techStack && (
+                      <div className="space-y-2">
+                        <p className="text-sm text-zinc-500">Технологии:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {generatedProject.techStack.map((tech, index) => (
+                            <Badge key={index} variant="outline" className="border-zinc-600 text-zinc-300">
+                              {tech}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
-        {/* Features */}
-        <div className="mt-16 text-center">
-          <h2 className="text-3xl font-bold text-zinc-100 mb-8">
-            Почему выбирают Nocturide
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center mx-auto">
-                <Sparkles className="w-6 h-6 text-blue-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-zinc-100">AI-генерация</h3>
-              <p className="text-zinc-400">
-                Создавайте полнофункциональные приложения с помощью передовых AI моделей
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-green-600/20 rounded-lg flex items-center justify-center mx-auto">
-                <Clock className="w-6 h-6 text-green-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-zinc-100">Быстрая разработка</h3>
-              <p className="text-zinc-400">
-                Сократите время разработки с недель до часов с помощью AI-ассистента
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center mx-auto">
-                <Users className="w-6 h-6 text-purple-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-zinc-100">Командная работа</h3>
-              <p className="text-zinc-400">
-                Работайте в командах с синхронизацией в реальном времени
-              </p>
-            </div>
+                    {generatedProject.message && (
+                      <div className="mt-4 p-3 bg-blue-900/20 border border-blue-500/50 rounded-lg">
+                        <p className="text-blue-400 text-sm">{generatedProject.message}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Code Editor */}
+                <Card className="glass-card">
+                  <CardHeader>
+                    <CardTitle className="text-zinc-100">Код проекта</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {/* File Selector */}
+                      <div className="flex space-x-2 overflow-x-auto pb-2">
+                        {getAllFiles().map((file, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setSelectedFile(file.name)}
+                            className={`px-3 py-1 rounded text-sm whitespace-nowrap transition-colors ${
+                              selectedFile === file.name
+                                ? 'bg-blue-600/20 text-blue-400 border border-blue-500/50'
+                                : 'bg-zinc-800/50 text-zinc-400 hover:bg-zinc-700/50'
+                            }`}
+                          >
+                            {file.name}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Monaco Editor Placeholder */}
+                      <div className="bg-zinc-900 rounded-lg border border-zinc-700/50 min-h-[400px] p-4">
+                        <div className="text-zinc-500 text-sm mb-2">
+                          Monaco Editor будет здесь
+                        </div>
+                        <pre className="text-zinc-300 text-sm overflow-auto max-h-[350px]">
+                          {selectedFile ? getFileContent(selectedFile) : 'Выберите файл для просмотра'}
+                        </pre>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              <Card className="glass-card">
+                <CardContent className="py-12 text-center">
+                  <div className="space-y-4">
+                    <div className="w-16 h-16 mx-auto bg-zinc-800/50 rounded-full flex items-center justify-center">
+                      <Sparkles className="h-8 w-8 text-zinc-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-zinc-100 mb-2">
+                        Создайте свой первый проект
+                      </h3>
+                      <p className="text-zinc-400 max-w-md mx-auto">
+                        Опишите идею вашего проекта, и наш AI сгенерирует готовый код с современными технологиями
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
