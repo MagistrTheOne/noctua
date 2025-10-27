@@ -3,16 +3,15 @@
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
 import { LanguageToggle } from './language-toggle'
+import { Menu, X } from 'lucide-react'
 
 export function NavigationBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const t = useTranslations('navigation')
 
   return (
     <nav
-      className="sticky top-0 z-50 border-b border-zinc-800/50 bg-zinc-950/95 backdrop-blur-md"
+      className="fixed top-0 z-50 w-full glass-navbar"
       role="navigation"
       aria-label="Main navigation"
     >
@@ -21,7 +20,7 @@ export function NavigationBar() {
           <div className="flex items-center space-x-2">
             <Link
               href="#hero"
-              className="text-xl font-bold text-white hover:text-zinc-200 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded"
+              className="text-xl font-bold text-zinc-100 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded"
               aria-label="Nocturide - Go to homepage"
             >
               Nocturide
@@ -31,48 +30,34 @@ export function NavigationBar() {
           <div className="hidden md:flex items-center space-x-6" role="menubar">
             <Link
               href="#features"
-              className="text-zinc-300 hover:text-white transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
+              className="text-zinc-400 hover:text-zinc-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
               role="menuitem"
             >
-              {t('features')}
+              Возможности
             </Link>
             <Link
               href="#about"
-              className="text-zinc-300 hover:text-white transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
+              className="text-zinc-400 hover:text-zinc-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
               role="menuitem"
             >
-              {t('about')}
+              О платформе
             </Link>
             <Link
-              href="#templates"
-              className="text-zinc-300 hover:text-white transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
+              href="#pricing"
+              className="text-zinc-400 hover:text-zinc-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
               role="menuitem"
             >
-              {t('templates')}
+              Тарифы
             </Link>
             <Link
               href="#contact"
-              className="text-zinc-300 hover:text-white transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
+              className="text-zinc-400 hover:text-zinc-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
               role="menuitem"
             >
-              {t('contact')}
+              Контакты
             </Link>
             <div className="flex items-center space-x-3" role="group" aria-label="User actions">
               <LanguageToggle />
-              <Button
-                variant="ghost"
-                className="text-zinc-300 hover:text-white hover:bg-zinc-800 text-sm focus:ring-2 focus:ring-zinc-500"
-                asChild
-              >
-                <Link href="/auth/signin" role="menuitem">{t('signin')}</Link>
-              </Button>
-              <Button
-                variant="outline"
-                className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white text-sm focus:ring-2 focus:ring-zinc-500"
-                asChild
-              >
-                <Link href="/auth/signup" role="menuitem">{t('signup')}</Link>
-              </Button>
             </div>
           </div>
 
@@ -81,13 +66,13 @@ export function NavigationBar() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-zinc-300 focus:ring-2 focus:ring-zinc-500"
+              className="text-zinc-400 focus:ring-2 focus:ring-zinc-500"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
-              {isMenuOpen ? "✕" : "☰"}
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
@@ -101,56 +86,36 @@ export function NavigationBar() {
           <div className="py-4 space-y-4 border-t border-zinc-800/50">
             <Link
               href="#features"
-              className="block text-zinc-300 hover:text-white transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
+              className="block text-zinc-400 hover:text-zinc-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
               role="menuitem"
               onClick={() => setIsMenuOpen(false)}
             >
-              {t('features')}
+              Возможности
             </Link>
             <Link
               href="#about"
-              className="block text-zinc-300 hover:text-white transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
+              className="block text-zinc-400 hover:text-zinc-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
               role="menuitem"
               onClick={() => setIsMenuOpen(false)}
             >
-              {t('about')}
+              О платформе
             </Link>
             <Link
-              href="#templates"
-              className="block text-zinc-300 hover:text-white transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
+              href="#pricing"
+              className="block text-zinc-400 hover:text-zinc-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
               role="menuitem"
               onClick={() => setIsMenuOpen(false)}
             >
-              {t('templates')}
+              Тарифы
             </Link>
             <Link
               href="#contact"
-              className="block text-zinc-300 hover:text-white transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
+              className="block text-zinc-400 hover:text-zinc-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
               role="menuitem"
               onClick={() => setIsMenuOpen(false)}
             >
-              {t('contact')}
+              Контакты
             </Link>
-            <div className="flex flex-col space-y-2 pt-2 border-t border-zinc-800/30">
-              <Button
-                variant="ghost"
-                className="justify-start text-zinc-300 hover:text-white hover:bg-zinc-800 focus:ring-2 focus:ring-zinc-500"
-                asChild
-              >
-                <Link href="/auth/signin" role="menuitem" onClick={() => setIsMenuOpen(false)}>
-                  {t('signin')}
-                </Link>
-              </Button>
-              <Button
-                variant="outline"
-                className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white focus:ring-2 focus:ring-zinc-500"
-                asChild
-              >
-                <Link href="/auth/signup" role="menuitem" onClick={() => setIsMenuOpen(false)}>
-                  {t('signup')}
-                </Link>
-              </Button>
-            </div>
           </div>
         </div>
       </div>

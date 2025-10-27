@@ -42,41 +42,62 @@ export class GigaChatAPI {
     }
   }
 
-  async sendMessage(message: string, context?: string): Promise<string> {
+  /**
+   * Выполняет запрос к GigaChat API с retry логикой для токена
+   */
+  private async makeGigaChatRequest(endpoint: string, body: any, retryCount = 0): Promise<any> {
     try {
       const token = await this.getAccessToken()
       
-      const response = await fetch(`${process.env.GIGACHAT_API_URL}/chat/completions`, {
+      const response = await fetch(`${process.env.GIGACHAT_API_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          model: 'GigaChat:latest',
-          messages: [
-            {
-              role: 'system',
-              content: `You are an AI coding assistant integrated into Nocturide IDE. 
-              Help users with their code, provide explanations, suggestions, and assistance.
-              ${context ? `Current file context: ${context}` : ''}`
-            },
-            {
-              role: 'user',
-              content: message
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 2000,
-        }),
+        body: JSON.stringify(body),
       })
 
-      if (!response.ok) {
-        throw new Error(`GigaChat API error: ${response.statusText}`)
+      // Если 401 и это первый запрос, обновляем токен и повторяем
+      if (response.status === 401 && retryCount === 0) {
+        console.log('Token expired, refreshing...')
+        this.accessToken = null // Сбрасываем токен
+        this.tokenExpiresAt = 0
+        return this.makeGigaChatRequest(endpoint, body, retryCount + 1)
       }
 
-      const data = await response.json()
+      if (!response.ok) {
+        throw new Error(`GigaChat API error: ${response.status} ${response.statusText}`)
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Error making GigaChat request:', error)
+      throw error
+    }
+  }
+
+  async sendMessage(message: string, context?: string): Promise<string> {
+    try {
+      const data = await this.makeGigaChatRequest('/api/v1/chat/completions', {
+        model: 'GigaChat',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an AI coding assistant integrated into Nocturide IDE. 
+            Help users with their code, provide explanations, suggestions, and assistance.
+            ${context ? `Current file context: ${context}` : ''}`
+          },
+          {
+            role: 'user',
+            content: message
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 2000,
+      })
+
       return data.choices[0]?.message?.content || 'No response from AI'
     } catch (error) {
       console.error('Error sending message to GigaChat:', error)
@@ -124,21 +145,12 @@ export class GigaChatAPI {
     }>
   }> {
     try {
-      const token = await this.getAccessToken()
-
-      const response = await fetch(`${process.env.GIGACHAT_API_URL}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          model: 'GigaChat:latest',
-          messages: [
-            {
-              role: 'system',
-              content: `You are an expert full-stack developer. Generate complete, production-ready projects based on user descriptions.
+      const data = await this.makeGigaChatRequest('/api/v1/chat/completions', {
+        model: 'GigaChat',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an expert full-stack developer. Generate complete, production-ready projects based on user descriptions.
 
 Create a detailed project structure with:
 1. Project name (descriptive, kebab-case)
@@ -173,31 +185,41 @@ Format your response as JSON:
 }
 
 Generate complete, working code. Include all necessary dependencies, configuration files, and implementation. Make it production-ready.`
-            },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          temperature: 0.3,
-          max_tokens: 4000,
-        }),
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 4000,
       })
 
-      if (!response.ok) {
-        throw new Error(`GigaChat API error: ${response.statusText}`)
-      }
-
-      const data = await response.json()
       const content = data.choices[0]?.message?.content
 
       if (!content) {
         throw new Error('No content received from AI')
       }
 
-      // Parse JSON response
+      // Parse JSON response - GigaChat может вернуть markdown с JSON внутри
       try {
-        const projectData = JSON.parse(content)
+        let jsonContent = content
+        
+        // Если ответ обернут в markdown код блоки, извлекаем JSON
+        const codeBlockMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/)
+        if (codeBlockMatch) {
+          jsonContent = codeBlockMatch[1].trim()
+        }
+        
+        // Если есть другие markdown элементы, пытаемся найти JSON
+        if (!jsonContent.startsWith('{')) {
+          const jsonMatch = content.match(/\{[\s\S]*\}/)
+          if (jsonMatch) {
+            jsonContent = jsonMatch[0]
+          }
+        }
+        
+        const projectData = JSON.parse(jsonContent)
         return {
           name: projectData.name || 'generated-project',
           settings: projectData.settings || {},
@@ -205,7 +227,25 @@ Generate complete, working code. Include all necessary dependencies, configurati
         }
       } catch (parseError) {
         console.error('Failed to parse AI response:', content)
-        throw new Error('Invalid response format from AI')
+        console.error('Parse error:', parseError)
+        
+        // Fallback: создаем базовый проект
+        return {
+          name: 'generated-project',
+          settings: {
+            framework: 'react',
+            language: 'typescript',
+            template: 'vite'
+          },
+          files: [
+            {
+              name: 'README.md',
+              path: '/README.md',
+              content: `# Generated Project\n\n${prompt}\n\nThis project was generated by Nocturide AI.`,
+              mimeType: 'text/markdown'
+            }
+          ]
+        }
       }
     } catch (error) {
       console.error('Error generating project with GigaChat:', error)

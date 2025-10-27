@@ -1,112 +1,69 @@
 'use client'
 
-import { Card, CardContent } from '@/components/ui/card'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { useTranslations } from 'next-intl'
 import { useInView } from '@/hooks/use-in-view'
 
 export function FAQSection() {
   const [ref, isInView] = useInView({ threshold: 0.1 })
-  const t = useTranslations('faq')
 
-  const faqItems = [
+  const faqs = [
     {
-      question: t('questions.whatIs.question'),
-      answer: t('questions.whatIs.answer'),
+      question: 'Как работает AI генерация кода?',
+      answer: 'Наш AI анализирует описание вашего проекта и генерирует готовый к продакшену код, используя продвинутые языковые модели. Он понимает контекст, следует лучшим практикам и создает чистый, поддерживаемый код.'
     },
     {
-      question: t('questions.howWorks.question'),
-      answer: t('questions.howWorks.answer'),
+      question: 'Какие языки программирования и фреймворки поддерживаются?',
+      answer: 'Мы поддерживаем React, Next.js, Vue.js, Angular, TypeScript, JavaScript, Python, Node.js и многие другие. Наш AI адаптируется к вашему предпочтительному технологическому стеку и паттернам кодирования.'
     },
     {
-      question: t('questions.cost.question'),
-      answer: t('questions.cost.answer'),
+      question: 'Могу ли я работать с командой в реальном времени?',
+      answer: 'Да! Nocturide поддерживает совместную работу в реальном времени, где несколько разработчиков могут работать над одним проектом одновременно. Изменения синхронизируются мгновенно между всеми участниками команды.'
     },
     {
-      question: t('questions.security.question'),
-      answer: t('questions.security.answer'),
+      question: 'Насколько безопасны мой код и данные?',
+      answer: 'Мы серьезно относимся к безопасности. Весь код шифруется при передаче и хранении. Мы никогда не храним ваши приватные репозитории постоянно и следуем стандартным практикам безопасности индустрии.'
     },
     {
-      question: t('questions.support.question'),
-      answer: t('questions.support.answer'),
+      question: 'Могу ли я развертывать проекты напрямую из Nocturide?',
+      answer: 'Конечно! Вы можете развернуть на Vercel, Netlify или любой другой платформе одним кликом. Мы также предоставляем поддержку кастомных доменов и автоматические SSL сертификаты.'
     },
     {
-      question: t('questions.export.question'),
-      answer: t('questions.export.answer'),
+      question: 'Что происходит, если я превышу лимиты плана?',
+      answer: 'Мы уведомим вас, когда вы приближаетесь к лимитам. Вы можете обновить план в любое время или купить дополнительные кредиты для разового использования.'
     },
+    {
+      question: 'Предлагаете ли вы кастомное обучение AI моделей?',
+      answer: 'Да, наш Enterprise план включает кастомное обучение AI моделей на основе вашей кодовой базы и стандартов кодирования. Это гарантирует, что AI генерирует код, соответствующий вашим специфическим требованиям.'
+    },
+    {
+      question: 'Есть ли бесплатная пробная версия для платных планов?',
+      answer: 'Да! Pro план включает 14-дневную бесплатную пробную версию. Кредитная карта не требуется. Вы можете отменить подписку в любое время в течение пробного периода.'
+    }
   ]
 
   return (
-    <div ref={ref} className={`container mx-auto px-4 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
+    <section id="faq" ref={ref} className={`container mx-auto px-4 py-24 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
       <div className="text-center space-y-4 mb-16">
-        <h2 className="text-4xl font-bold text-white">{t('title')}</h2>
+        <h2 className="text-4xl font-bold text-zinc-100">Часто задаваемые вопросы</h2>
         <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
-          Find answers to the most common questions about Nocturide
+          Ответы на популярные вопросы о Nocturide
         </p>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        <Card className="glass border-zinc-800">
-          <CardContent className="p-8">
-            <Accordion type="single" collapsible className="space-y-4">
-              {faqItems.map((item, index) => (
-                <AccordionItem
-                  key={index}
-                  value={`item-${index}`}
-                  className="border-b border-zinc-800 last:border-b-0"
-                >
-                  <AccordionTrigger
-                    className="text-left text-white hover:text-zinc-200 hover:no-underline py-4 focus:ring-2 focus:ring-zinc-500"
-                    aria-describedby={`faq-answer-${index}`}
-                  >
-                    <span className="text-base font-medium">{item.question}</span>
-                  </AccordionTrigger>
-                  <AccordionContent
-                    className="text-zinc-400 leading-relaxed pb-4"
-                    id={`faq-answer-${index}`}
-                    role="region"
-                    aria-labelledby={`faq-trigger-${index}`}
-                  >
-                    {item.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </CardContent>
-        </Card>
-
-        {/* Still have questions CTA */}
-        <div className={`mt-12 text-center transition-all duration-500 ${isInView ? 'animate-fade-in' : ''}`}>
-          <Card className="glass border-zinc-800 max-w-2xl mx-auto">
-            <CardContent className="p-8">
-              <div className="flex items-center justify-center space-x-4 mb-4">
-                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                <span className="text-white font-semibold text-lg">Still have questions?</span>
-                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-              </div>
-              <p className="text-zinc-400 mb-6">
-                Can't find the answer you're looking for? Our support team is here to help.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="mailto:maxonyushko71@gmail.com"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-lg transition-colors"
-                >
-                  📧 Send Email
-                </a>
-                <a
-                  href="https://t.me/MagistrTheOne"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                >
-                  💬 Telegram Support
-                </a>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="max-w-3xl mx-auto">
+        <Accordion type="single" collapsible className="space-y-4">
+          {faqs.map((faq, index) => (
+            <AccordionItem key={index} value={`item-${index}`} className="glass-card border-zinc-700/50">
+              <AccordionTrigger className="text-left text-zinc-100 hover:text-zinc-200 px-6 py-4">
+                {faq.question}
+              </AccordionTrigger>
+              <AccordionContent className="text-zinc-400 px-6 pb-4 leading-relaxed">
+                {faq.answer}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
-    </div>
+    </section>
   )
 }

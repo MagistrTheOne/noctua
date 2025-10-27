@@ -1,78 +1,76 @@
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useTranslations } from 'next-intl'
+import { Card, CardContent } from '@/components/ui/card'
 import { useInView } from '@/hooks/use-in-view'
+import { Sparkles, Code2, Rocket, Users, FolderKanban, Plug } from 'lucide-react'
 
 export function FeaturesGrid() {
   const [ref, isInView] = useInView({ threshold: 0.1 })
-  const t = useTranslations('features')
 
   const features = [
     {
-      title: t('aiDevelopment.title'),
-      description: t('aiDevelopment.description'),
-      icon: '🤖',
+      title: 'AI-генерация кода',
+      description: 'Создавайте полнофункциональные приложения с помощью искусственного интеллекта',
+      icon: Sparkles,
+      color: 'text-blue-500'
     },
     {
-      title: t('fullstackGeneration.title'),
-      description: t('fullstackGeneration.description'),
-      icon: '⚡',
+      title: 'Monaco Editor',
+      description: 'Профессиональный редактор кода с подсветкой синтаксиса и автодополнением',
+      icon: Code2,
+      color: 'text-green-500'
     },
     {
-      title: t('realtimeCollaboration.title'),
-      description: t('realtimeCollaboration.description'),
-      icon: '👥',
+      title: 'Мгновенный Deploy',
+      description: 'Развертывайте проекты одним кликом на современной инфраструктуре',
+      icon: Rocket,
+      color: 'text-purple-500'
     },
     {
-      title: t('instantDeployment.title'),
-      description: t('instantDeployment.description'),
-      icon: '🚀',
+      title: 'Совместная работа',
+      description: 'Работайте в командах с синхронизацией в реальном времени',
+      icon: Users,
+      color: 'text-orange-500'
     },
     {
-      title: t('smartEditor.title'),
-      description: t('smartEditor.description'),
-      icon: '💡',
+      title: 'Шаблоны проектов',
+      description: 'Готовые шаблоны для быстрого старта разработки',
+      icon: FolderKanban,
+      color: 'text-pink-500'
     },
     {
-      title: t('enterpriseSecurity.title'),
-      description: t('enterpriseSecurity.description'),
-      icon: '🔒',
-    },
+      title: 'Интеграции',
+      description: 'Подключайтесь к популярным сервисам и API без проблем',
+      icon: Plug,
+      color: 'text-cyan-500'
+    }
   ]
 
   return (
-    <div ref={ref} className={`container mx-auto px-4 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
-      <div className="text-center space-y-4 mb-12">
-        <h2 className="text-4xl font-bold text-white">{t('title')}</h2>
+    <section id="features" ref={ref} className={`container mx-auto px-4 py-24 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
+      <div className="text-center space-y-4 mb-20">
+        <h2 className="text-4xl font-bold text-zinc-100">Возможности платформы</h2>
         <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
-          {t('subtitle')}
+          Все необходимые инструменты для современной веб-разработки в одном месте
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {features.map((feature, index) => (
-          <Card
-            key={index}
-            className={`glass border-zinc-800 hover:bg-zinc-900/60 transition-all duration-300 hover:scale-105 group ${
-              isInView ? 'animate-fade-in-up' : ''
-            }`}
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-center space-x-3 mb-2">
-                <div className="text-2xl">{feature.icon}</div>
-              <CardTitle className="text-white text-lg">{feature.title}</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-zinc-400 text-sm leading-relaxed">
-                {feature.description}
-              </CardDescription>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {features.map((feature, index) => {
+          const IconComponent = feature.icon
+          return (
+            <Card key={index} className="glass-card hover:border-zinc-600/50 transition-all duration-300 hover:scale-105">
+              <CardContent className="p-8 text-center space-y-6">
+                <div className="w-16 h-16 bg-zinc-800/50 rounded-xl flex items-center justify-center mx-auto">
+                  <IconComponent className={`w-8 h-8 ${feature.color}`} />
+                </div>
+                <h3 className="text-xl font-semibold text-zinc-100">{feature.title}</h3>
+                <p className="text-zinc-400 leading-relaxed">{feature.description}</p>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
-    </div>
+    </section>
   )
 }

@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/auth-provider";
@@ -46,14 +44,10 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: 'https://nocturide.dev',
-    languages: {
-      'ru': 'https://nocturide.dev/ru',
-      'en': 'https://nocturide.dev/en',
-    },
   },
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "ru_RU",
     url: "https://nocturide.dev",
     title: "Nocturide IDE - AI-Powered Web Development Environment",
     description: "Create stunning apps and websites with AI assistance. Modern web-based IDE with code generation, real-time collaboration, and instant deployment.",
@@ -90,5 +84,19 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <>{children}</>;
+  return (
+    <html lang="ru" className="dark">
+      <head>
+        <JSONLD />
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <AuthProvider>
+          <Analytics />
+          {children}
+        </AuthProvider>
+      </body>
+    </html>
+  );
 }

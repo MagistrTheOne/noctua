@@ -6,9 +6,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { useTranslations } from 'next-intl'
 import { useInView } from '@/hooks/use-in-view'
-import { useParallax } from '@/hooks/use-parallax'
 
 export function HeroSection() {
   const [prompt, setPrompt] = useState('')
@@ -18,219 +16,185 @@ export function HeroSection() {
   const [isTyping, setIsTyping] = useState(true)
   const [ref, isInView] = useInView({ threshold: 0.3 })
 
-  const t = useTranslations('hero')
+  // Состояния для анимации заголовка
+  const [titleText, setTitleText] = useState('')
+  const [isTitleTyping, setIsTitleTyping] = useState(true)
+  const [showCursor, setShowCursor] = useState(true)
+  
   const router = useRouter()
 
-  // Parallax effects
-  const parallax1 = useParallax({ speed: 0.3 })
-  const parallax2 = useParallax({ speed: -0.2 })
-  const parallax3 = useParallax({ speed: 0.1 })
+  const fullTitle = "Создавайте приложения с ИИ"
 
   // Примеры промптов
   const promptExamples = [
-    "Create a todo app with React, TypeScript, and Tailwind CSS...",
-    "Build an e-commerce store with payment integration...",
-    "Make a social media dashboard with real-time updates...",
-    "Design a blog platform with SEO optimization...",
-    "Create a SaaS analytics dashboard with charts..."
+    "Создай приложение для управления задачами с React, TypeScript и Tailwind CSS",
+    "Построй интернет-магазин с корзиной покупок и системой оплаты",
+    "Сделай дашборд с графиками и аналитикой для бизнеса",
+    "Создай блог с системой комментариев и управлением контентом",
+    "Построй CRM систему для управления клиентами и продажами"
   ]
+
+  // Эффект анимации заголовка
+  useEffect(() => {
+    if (isTitleTyping && titleText.length < fullTitle.length) {
+      const timeout = setTimeout(() => {
+        setTitleText(fullTitle.slice(0, titleText.length + 1))
+      }, 100) // 100мс на символ
+      return () => clearTimeout(timeout)
+    } else if (isTitleTyping && titleText.length === fullTitle.length) {
+      // Завершили печатание, начинаем мигание курсора
+      setIsTitleTyping(false)
+    }
+  }, [titleText, isTitleTyping, fullTitle])
+
+  // Эффект мигания курсора
+  useEffect(() => {
+    if (!isTitleTyping) {
+      const interval = setInterval(() => {
+        setShowCursor(prev => !prev)
+      }, 500) // Мигание каждые 500мс
+      return () => clearInterval(interval)
+    }
+  }, [isTitleTyping])
 
   // Эффект live typing для placeholder
   useEffect(() => {
-    if (!isInView) return
-
     const currentExample = promptExamples[currentPlaceholderIndex]
-    let charIndex = 0
-
-    const typeInterval = setInterval(() => {
-      if (charIndex < currentExample.length) {
-        setDisplayedPlaceholder(currentExample.slice(0, charIndex + 1))
-        charIndex++
+    
+    if (isTyping) {
+      if (displayedPlaceholder.length < currentExample.length) {
+        const timeout = setTimeout(() => {
+          setDisplayedPlaceholder(currentExample.slice(0, displayedPlaceholder.length + 1))
+        }, 50)
+        return () => clearTimeout(timeout)
       } else {
-        clearInterval(typeInterval)
-        setIsTyping(false)
-
-        // Переход к следующему примеру через 2 секунды
-        setTimeout(() => {
-          setIsTyping(true)
-          setCurrentPlaceholderIndex((prev) => (prev + 1) % promptExamples.length)
+        const timeout = setTimeout(() => {
+          setIsTyping(false)
         }, 2000)
+        return () => clearTimeout(timeout)
       }
-    }, 100)
-
-    return () => clearInterval(typeInterval)
-  }, [currentPlaceholderIndex, isInView])
-
-  // Сброс при фокусе
-  const handleFocus = () => {
-    setIsTyping(false)
-    setDisplayedPlaceholder('')
-  }
-
-  const handleBlur = () => {
-    if (!prompt) {
-      setIsTyping(true)
-      setCurrentPlaceholderIndex(0)
+    } else {
+      if (displayedPlaceholder.length > 0) {
+        const timeout = setTimeout(() => {
+          setDisplayedPlaceholder(displayedPlaceholder.slice(0, -1))
+        }, 30)
+        return () => clearTimeout(timeout)
+      } else {
+        setIsTyping(true)
+        setCurrentPlaceholderIndex((prev) => (prev + 1) % promptExamples.length)
+      }
     }
-  }
+  }, [displayedPlaceholder, isTyping, currentPlaceholderIndex, promptExamples])
 
-  const handleExampleClick = (example: string) => {
-    setPrompt(example.replace('...', ''))
-  }
-
-  const handleCreateProject = async () => {
+  const handleGenerate = async () => {
     if (!prompt.trim()) {
-      toast.error('Please describe your project')
+      toast.error('Пожалуйста, введите описание проекта')
       return
     }
 
     setIsLoading(true)
-
     try {
-      // Generate project with AI
-      const response = await fetch('/api/ai/generate-project', {
+      const response = await fetch('/api/demo/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          prompt: prompt,
-        }),
+        body: JSON.stringify({ prompt }),
       })
 
-      if (response.ok) {
-        const result = await response.json()
-        toast.success('Project generated successfully!')
-        router.push(`/workspace/${result.projectId}`)
-      } else {
-        const error = await response.json()
-        toast.error(error.error || 'Failed to generate project')
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Ошибка генерации проекта')
       }
+
+      const data = await response.json()
+      
+      // Показываем уведомление об успехе
+      toast.success(`Проект "${data.name}" сгенерирован!`)
+      
+      // Перенаправляем на демо страницу с результатом
+      router.push(`/demo?project=${encodeURIComponent(JSON.stringify(data))}`)
     } catch (error) {
-      toast.error('An error occurred. Please try again.')
+      console.error('Generation error:', error)
+      toast.error('Ошибка при генерации проекта. Попробуйте еще раз.')
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div ref={ref} className={`relative container mx-auto px-4 text-center space-y-8 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
-      {/* Parallax background elements */}
-      <div
-        className="absolute inset-0 pointer-events-none overflow-hidden"
-        style={{
-          transform: `translateY(${parallax1}px)`,
-        }}
-      >
-        <div className="absolute top-20 left-20 w-72 h-72 bg-zinc-800/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
-      </div>
+    <section id="hero" ref={ref} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-linear-to-br from-zinc-950 via-neutral-950 to-black">
+      <div className={`relative z-10 container mx-auto px-4 text-center transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
+        <div className="max-w-4xl mx-auto space-y-12">
+          {/* Main heading */}
+          <div className="space-y-6">
+            <h1 className="text-5xl md:text-7xl font-bold text-zinc-100 leading-tight">
+              {titleText}
+              <span className={`inline-block w-1 h-16 bg-blue-500 ml-1 ${showCursor ? 'opacity-100' : 'opacity-0'} transition-opacity duration-100`}></span>
+            </h1>
+            <p className="text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+              Современная среда веб-разработки с AI-генерацией кода, совместной работой в реальном времени и мгновенным развертыванием
+            </p>
+          </div>
 
-      <div
-        className="absolute inset-0 pointer-events-none overflow-hidden"
-        style={{
-          transform: `translateY(${parallax2}px)`,
-        }}
-      >
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-green-500/5 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="space-y-4 relative z-10">
-        <h1 className="text-6xl font-bold text-white">
-          {t('title')}
-        </h1>
-        <p className="text-lg text-zinc-400 max-w-3xl mx-auto leading-relaxed">
-          {t('subtitle')}
-        </p>
-      </div>
-
-      {/* Trust badges */}
-      <div className="flex items-center justify-center space-x-8 text-zinc-500">
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="text-sm">{t('noCreditCard')}</span>
-        </div>
-        <div className="w-1 h-1 bg-zinc-600 rounded-full"></div>
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-          <span className="text-sm">{t('freeToStart')}</span>
-        </div>
-        <div className="w-1 h-1 bg-zinc-600 rounded-full"></div>
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-          <span className="text-sm">{t('quickSetup')}</span>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto">
-        <div className="relative">
-          <Card className="glass border-zinc-800">
-            <CardContent className="p-6">
-              <div className="space-y-4">
+          {/* Prompt input */}
+          <Card className="max-w-3xl mx-auto glass-card">
+            <CardContent className="p-8">
+              <div className="space-y-6">
                 <Textarea
-                  placeholder={isTyping ? displayedPlaceholder : promptExamples[0]}
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  className="min-h-[100px] resize-none bg-zinc-900/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus:border-zinc-600 text-lg leading-relaxed"
+                  placeholder={displayedPlaceholder}
+                  className="min-h-[140px] bg-zinc-900/30 border-zinc-700/50 text-zinc-100 placeholder:text-zinc-500 resize-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
                   disabled={isLoading}
                 />
-
-                <div className="flex justify-end">
-                  <Button
-                    onClick={handleCreateProject}
-                    disabled={isLoading || !prompt.trim()}
-                    className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-100 px-8 py-2 text-sm"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                        <span>{t('creating')}</span>
-                      </div>
-                    ) : (
-                      t('create')
-                    )}
-                  </Button>
-                </div>
+                <Button
+                  onClick={handleGenerate}
+                  disabled={isLoading || !prompt.trim()}
+                  className="w-full bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center space-x-3">
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Генерируем проект...</span>
+                    </div>
+                  ) : (
+                    'Начать создавать'
+                  )}
+                </Button>
               </div>
             </CardContent>
           </Card>
-        </div>
 
-        {/* Примеры промптов */}
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
-          {promptExamples.map((example, index) => (
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
-              key={index}
-              variant="outline"
-              size="sm"
-              onClick={() => handleExampleClick(example)}
-              className="text-xs border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white hover:border-zinc-600 transition-colors"
-              disabled={isLoading}
+              onClick={() => router.push('/demo')}
+              className="w-full sm:w-auto bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-200"
             >
-              {example.replace('...', '')}
+              Попробовать демо
             </Button>
-          ))}
-        </div>
-
-        {/* Счетчик проектов */}
-        <div className="mt-8">
-          <div className="inline-flex items-center space-x-2 bg-zinc-900/50 border border-zinc-700 rounded-full px-4 py-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-zinc-300 text-sm font-medium">10,000+ projects created</span>
+            <Button
+              onClick={() => router.push('/auth/signup')}
+              variant="outline"
+              className="w-full sm:w-auto border-zinc-700/50 text-zinc-300 hover:bg-zinc-800/50 hover:text-zinc-100 font-semibold py-4 px-8 rounded-lg transition-all duration-200"
+            >
+              Получить полный доступ
+            </Button>
+          </div>
+          
+          {/* Info text */}
+          <div className="text-center space-y-2">
+            <p className="text-sm text-zinc-500">
+              Бесплатное демо: 3 генерации в час • Полный доступ требует одобрения от MagistrTheOne
+            </p>
+            <div className="flex items-center justify-center space-x-4 text-xs text-zinc-600">
+              <span>• Без регистрации</span>
+              <span>• Требуется одобрение</span>
+            </div>
           </div>
         </div>
-
-        <div className="mt-6 flex items-center justify-center space-x-8 text-zinc-500 relative z-10">
-          <div className="text-sm">{t('noCoding')}</div>
-          <div className="w-1 h-1 bg-zinc-600 rounded-full"></div>
-          <div className="text-sm">{t('aiPowered')}</div>
-          <div className="w-1 h-1 bg-zinc-600 rounded-full"></div>
-          <div className="text-sm">{t('instantResults')}</div>
-        </div>
       </div>
-    </div>
+    </section>
   )
 }

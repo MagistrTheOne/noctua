@@ -1,116 +1,120 @@
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { useTranslations } from 'next-intl'
+import { Badge } from '@/components/ui/badge'
 import { useInView } from '@/hooks/use-in-view'
-import Link from 'next/link'
+import { Check } from 'lucide-react'
 
 export function PricingSection() {
   const [ref, isInView] = useInView({ threshold: 0.1 })
-  const t = useTranslations('pricing')
 
   const plans = [
     {
-      name: t('free.name'),
-      price: t('free.price'),
-      period: t('free.period'),
-      features: t('free.features').split(','),
-      button: t('free.button'),
-      href: '/auth/signup',
+      name: 'Бесплатно',
+      description: 'Идеально для изучения и экспериментов',
+      price: '0₽',
+      period: 'навсегда',
+      features: [
+        '5 проектов в месяц',
+        'Базовая AI генерация кода',
+        'Community поддержка',
+        'Стандартные шаблоны',
+        'Публичные репозитории'
+      ],
+      cta: 'Начать',
+      popular: false
     },
     {
-      name: t('pro.name'),
-      price: t('pro.price'),
-      period: t('pro.period'),
-      features: t('pro.features').split(','),
-      button: t('pro.button'),
-      href: '/auth/signup?plan=pro',
-      popular: t('pro.popular'),
-      highlighted: true,
+      name: 'Pro',
+      description: 'Для профессиональных разработчиков и команд',
+      price: '2,990₽',
+      period: 'в месяц',
+      features: [
+        'Неограниченные проекты',
+        'Продвинутые AI модели',
+        'Приоритетная поддержка',
+        'Премиум шаблоны',
+        'Приватные репозитории',
+        'Командная работа',
+        'Кастомные домены',
+        'Аналитический дашборд'
+      ],
+      cta: 'Попробовать Pro',
+      popular: true
     },
     {
-      name: t('enterprise.name'),
-      price: t('enterprise.price'),
-      period: t('enterprise.period'),
-      features: t('enterprise.features').split(','),
-      button: t('enterprise.button'),
-      href: '#contact',
-    },
+      name: 'Enterprise',
+      description: 'Кастомные решения для крупных организаций',
+      price: 'По запросу',
+      period: '',
+      features: [
+        'Все возможности Pro',
+        'Выделенная инфраструктура',
+        '24/7 телефонная поддержка',
+        'Кастомные интеграции',
+        'SSO & SAML',
+        'Расширенная безопасность',
+        'Инструменты соответствия',
+        'Кастомное обучение AI'
+      ],
+      cta: 'Связаться с продажами',
+      popular: false
+    }
   ]
 
   return (
-    <div ref={ref} className={`container mx-auto px-4 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
-      <div className="text-center space-y-4 mb-12">
-        <h2 className="text-4xl font-bold text-white">{t('title')}</h2>
+    <section id="pricing" ref={ref} className={`container mx-auto px-4 py-24 transition-all duration-1000 ${isInView ? 'animate-fade-in-up' : ''}`}>
+      <div className="text-center space-y-4 mb-16">
+        <h2 className="text-4xl font-bold text-zinc-100">Простые тарифы</h2>
         <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
-          {t('subtitle')}
+          Выберите план, который подходит вашим потребностям в разработке
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {plans.map((plan, index) => (
-          <Card
-            key={index}
-            className={`glass border-zinc-800 hover:bg-zinc-900/60 transition-all duration-300 hover:scale-105 relative ${
-              plan.highlighted ? 'border-zinc-600 shadow-lg shadow-zinc-900/50' : ''
-            } ${isInView ? 'animate-fade-in-up' : ''}`}
-            style={{ animationDelay: `${index * 200}ms` }}
+          <Card 
+            key={index} 
+            className={`glass-card transition-all duration-300 hover:scale-105 ${
+              plan.popular ? 'border-blue-500/50 ring-2 ring-blue-500/20' : ''
+            }`}
           >
-            {plan.highlighted && (
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="bg-linear-to-r from-zinc-800 to-zinc-700 text-white px-4 py-2 rounded-full text-sm font-medium">
-                  {plan.popular}
-                </span>
+            {plan.popular && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-blue-600 text-white">Самый популярный</Badge>
               </div>
             )}
-
-            <CardHeader className="text-center pb-4">
-              <CardTitle className="text-white text-2xl">{plan.name}</CardTitle>
+            <CardHeader className="text-center pb-8">
+              <CardTitle className="text-2xl font-bold text-zinc-100">{plan.name}</CardTitle>
+              <p className="text-zinc-400">{plan.description}</p>
               <div className="mt-4">
-                <span className="text-4xl font-bold text-white">{plan.price}</span>
-                {plan.period && (
-                  <span className="text-zinc-400 text-lg">/{plan.period}</span>
-                )}
+                <span className="text-4xl font-bold text-zinc-100">{plan.price}</span>
+                <span className="text-zinc-400 ml-2">{plan.period}</span>
               </div>
             </CardHeader>
-
             <CardContent className="space-y-6">
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full shrink-0"></div>
-                    <span className="text-zinc-300 text-sm">{feature}</span>
+                    <Check className="w-5 h-5 text-green-500 shrink-0" />
+                    <span className="text-zinc-300">{feature}</span>
                   </li>
                 ))}
               </ul>
-
-              <Button
-                className={`w-full transition-all duration-300 ${
-                  plan.highlighted
-                    ? 'bg-linear-to-r from-zinc-800 to-zinc-700 hover:from-zinc-700 hover:to-zinc-600 border-zinc-600 text-white'
-                    : 'bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-100'
-                }`}
-                asChild
+              <Button 
+                className={`w-full ${
+                  plan.popular 
+                    ? 'bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' 
+                    : 'bg-zinc-800 hover:bg-zinc-700'
+                } text-white`}
               >
-                <Link href={plan.href}>
-                  {plan.button}
-                </Link>
+                {plan.cta}
               </Button>
             </CardContent>
           </Card>
         ))}
       </div>
-
-      {/* FAQ hint */}
-      <div className={`mt-16 text-center transition-all duration-500 ${isInView ? 'animate-fade-in' : ''}`}>
-        <p className="text-zinc-400 mb-4">
-          Have questions about pricing or need a custom plan?
-        </p>
-        <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white" asChild>
-          <Link href="#contact">Contact Sales</Link>
-        </Button>
-      </div>
-    </div>
+    </section>
   )
 }
