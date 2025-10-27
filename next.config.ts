@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./next-intl.config.ts');
 
 const nextConfig: NextConfig = {
   cacheComponents: true, // Cache Components вместо experimental.ppr
@@ -8,4 +11,4 @@ const nextConfig: NextConfig = {
   // Turbopack теперь по умолчанию, webpack не нужен
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

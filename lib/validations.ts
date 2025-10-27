@@ -29,6 +29,7 @@ export const createFileSchema = z.object({
   path: z.string().min(1, 'File path is required'),
   content: z.string().default(''),
   isDirectory: z.boolean().default(false),
+  projectId: z.string().uuid('Invalid project ID'),
   parentId: z.string().uuid().optional(),
 })
 
@@ -45,7 +46,7 @@ export const projectResponseSchema = z.object({
   description: z.string().nullable(),
   userId: z.string(),
   isPublic: z.boolean(),
-  settings: z.record(z.any()).nullable(),
+  settings: z.record(z.string(), z.any()).nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })

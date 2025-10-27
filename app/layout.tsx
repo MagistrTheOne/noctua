@@ -1,13 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import { notFound } from 'next/navigation';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { JSONLD } from "@/components/seo/json-ld";
 import { Analytics } from "@/components/analytics/analytics";
-import { locales } from '@/i18n';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,13 +64,6 @@ export const metadata: Metadata = {
         alt: "Nocturide IDE - AI-Powered Web Development Environment",
       },
     ],
-    alternates: {
-      canonical: 'https://nocturide.dev',
-      languages: {
-        'ru': 'https://nocturide.dev/ru',
-        'en': 'https://nocturide.dev/en',
-      },
-    },
   },
   twitter: {
     card: "summary_large_image",
@@ -94,9 +83,6 @@ export const viewport: Viewport = {
   themeColor: "#18181b",
 };
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
 
 export default async function RootLayout({
   children,

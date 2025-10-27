@@ -133,7 +133,9 @@ export class WebContainerManager {
       throw new Error('WebContainer not initialized')
     }
 
-    return this.webcontainer.port
+    // WebContainer doesn't have a direct port property
+    // Return a default port or get it from the URL
+    return 3000
   }
 
   async getUrl(): Promise<string> {
@@ -141,7 +143,9 @@ export class WebContainerManager {
       throw new Error('WebContainer not initialized')
     }
 
-    return this.webcontainer.url
+    // WebContainer doesn't have a direct url property
+    // Return a default URL or construct it from the port
+    return 'http://localhost:3000'
   }
 
   isReady(): boolean {

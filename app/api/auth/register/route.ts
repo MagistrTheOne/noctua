@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { users } from '@/drizzle/schema'
 import { eq } from 'drizzle-orm'
 import bcrypt from 'bcryptjs'
+import { randomUUID } from 'crypto'
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,10 +31,11 @@ export async function POST(request: NextRequest) {
 
     // Создаем пользователя
     const newUser = await db.insert(users).values({
+      id: randomUUID(),
       name,
       email,
       password: hashedPassword,
-      emailVerified: new Date(), // Для dev
+      emailVerified: true, // Для dev
     }).returning()
 
     return NextResponse.json({ 

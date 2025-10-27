@@ -42,8 +42,8 @@ export function generateJSONLD() {
       name: 'MagistrTheOne',
       url: 'https://github.com/MagistrTheOne'
     },
-    datePublished: '2025-01-01',
-    dateModified: new Date().toISOString().split('T')[0],
+    datePublished: '2025-10-01',
+    dateModified: '2025-10-01',
     softwareVersion: '1.0.0',
     aggregateRating: {
       '@type': 'AggregateRating',

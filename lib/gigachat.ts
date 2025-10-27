@@ -31,6 +31,10 @@ export class GigaChatAPI {
       this.accessToken = data.access_token
       this.tokenExpiresAt = Date.now() + (data.expires_in * 1000) - 60000 // 1 minute buffer
       
+      if (!this.accessToken) {
+        throw new Error('No access token received from GigaChat')
+      }
+      
       return this.accessToken
     } catch (error) {
       console.error('Error getting GigaChat access token:', error)

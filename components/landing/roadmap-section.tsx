@@ -11,17 +11,17 @@ export function RoadmapSection() {
   const quarters = [
     {
       title: t('q1.title'),
-      items: t('q1.items'),
+      items: t('q1.items') as unknown as string[],
       color: 'bg-blue-500',
     },
     {
       title: t('q2.title'),
-      items: t('q2.items'),
+      items: t('q2.items') as unknown as string[],
       color: 'bg-green-500',
     },
     {
       title: t('q3.title'),
-      items: t('q3.items'),
+      items: t('q3.items') as unknown as string[],
       color: 'bg-purple-500',
     },
   ]
