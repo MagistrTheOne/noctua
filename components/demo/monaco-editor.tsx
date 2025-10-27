@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { FileText, Play, Download, Copy, Eye, EyeOff } from 'lucide-react'
+import { FileManager } from './file-manager'
 
 interface MonacoCodeEditorProps {
   files: Array<{
@@ -127,75 +128,8 @@ export function MonacoCodeEditor({
 
   return (
     <div className="space-y-4">
-      {/* File Tabs */}
-      <Card className="glass-card">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-zinc-100 text-sm">Файлы проекта</CardTitle>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowPreview(!showPreview)}
-                className="border-zinc-600 text-zinc-300 hover:bg-zinc-700/50"
-              >
-                {showPreview ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                {showPreview ? 'Скрыть' : 'Превью'}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={downloadAllFiles}
-                className="border-zinc-600 text-zinc-300 hover:bg-zinc-700/50"
-              >
-                <Download className="h-4 w-4 mr-1" />
-                Скачать все
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="flex space-x-1 overflow-x-auto pb-2">
-            {files.map((file, index) => (
-              <div key={index} className="flex items-center space-x-1">
-                <button
-                  onClick={() => onFileSelect(file.name)}
-                  className={`px-3 py-2 rounded text-sm whitespace-nowrap transition-colors flex items-center space-x-2 ${
-                    selectedFile === file.name
-                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/50'
-                      : 'bg-zinc-800/50 text-zinc-400 hover:bg-zinc-700/50'
-                  }`}
-                >
-                  <FileText className="h-3 w-3" />
-                  <span>{file.name}</span>
-                  <Badge variant="outline" className="text-xs border-zinc-600 text-zinc-500">
-                    {getLanguage(file.name)}
-                  </Badge>
-                </button>
-                
-                <div className="flex space-x-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => copyToClipboard(file.name)}
-                    className="h-6 w-6 p-0 hover:bg-zinc-700/50"
-                  >
-                    <Copy className={`h-3 w-3 ${copiedFile === file.name ? 'text-green-400' : 'text-zinc-500'}`} />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => downloadFile(file.name)}
-                    className="h-6 w-6 p-0 hover:bg-zinc-700/50"
-                  >
-                    <Download className="h-3 w-3 text-zinc-500" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* File Manager */}
+      <FileManager />
 
       {/* Monaco Editor */}
       <Card className="glass-card">

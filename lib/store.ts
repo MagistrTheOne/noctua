@@ -36,7 +36,10 @@ interface DemoState {
   setSelectedFile: (file: string | null) => void
   setProjectFiles: (files: Array<{name: string, content: string}>) => void
   updateProjectFile: (fileName: string, content: string) => void
-  setActiveTab: (tab: 'generate' | 'chat' | 'review' | 'debug') => void
+  addFile: (fileName: string, content: string) => void
+  deleteFile: (fileName: string) => void
+  renameFile: (oldName: string, newName: string) => void
+  setActiveTab: (tab: 'generate' | 'chat' | 'review' | 'debug' | 'preview') => void
   addChatMessage: (message: any) => void
   clearChatMessages: () => void
   resetDemo: () => void
@@ -75,6 +78,40 @@ export const useDemoStore = create<DemoState>()(
           file.name === fileName ? { ...file, content } : file
         )
       })),
+      
+      addFile: (fileName, content) => set((state) => {
+        const exists = state.projectFiles.some(file => file.name === fileName)
+        if (exists) return state
+        
+        return {
+          projectFiles: [...state.projectFiles, { name: fileName, content }],
+          selectedFile: fileName
+        }
+      }),
+      
+      deleteFile: (fileName) => set((state) => {
+        const newFiles = state.projectFiles.filter(file => file.name !== fileName)
+        const newSelectedFile = state.selectedFile === fileName 
+          ? (newFiles.length > 0 ? newFiles[0].name : null)
+          : state.selectedFile
+        
+        return {
+          projectFiles: newFiles,
+          selectedFile: newSelectedFile
+        }
+      }),
+      
+      renameFile: (oldName, newName) => set((state) => {
+        const exists = state.projectFiles.some(file => file.name === newName)
+        if (exists) return state
+        
+        return {
+          projectFiles: state.projectFiles.map(file => 
+            file.name === oldName ? { ...file, name: newName } : file
+          ),
+          selectedFile: state.selectedFile === oldName ? newName : state.selectedFile
+        }
+      }),
       
       setActiveTab: (tab) => set({ activeTab: tab }),
       

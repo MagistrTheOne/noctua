@@ -11,7 +11,8 @@ import { MonacoCodeEditor } from '@/components/demo/monaco-editor'
 import { GigaChat } from '@/components/demo/gigachat-chat'
 import { CodeReview } from '@/components/demo/code-review'
 import { DebugAssistant } from '@/components/demo/debug-assistant'
-import { Sparkles, Clock, Users, TrendingUp, ArrowRight, Zap, Code, FileText, Play, MessageSquare, Search, Bug } from 'lucide-react'
+import { LivePreview } from '@/components/demo/live-preview'
+import { Sparkles, Clock, Users, TrendingUp, ArrowRight, Zap, Code, FileText, Play, MessageSquare, Search, Bug, Monitor } from 'lucide-react'
 import Link from 'next/link'
 
 interface GeneratedProject {
@@ -47,7 +48,7 @@ export default function DemoPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [projectFiles, setProjectFiles] = useState<Array<{name: string, content: string}>>([])
-  const [activeTab, setActiveTab] = useState<'generate' | 'chat' | 'review' | 'debug'>('generate')
+  const [activeTab, setActiveTab] = useState<'generate' | 'chat' | 'review' | 'debug' | 'preview'>('generate')
 
   // Обработка проекта из URL параметров (при переходе с Hero Section)
   useEffect(() => {
@@ -60,6 +61,8 @@ export default function DemoPage() {
       setActiveTab('review')
     } else if (tabParam === 'debug') {
       setActiveTab('debug')
+    } else if (tabParam === 'preview') {
+      setActiveTab('preview')
     }
     
     if (projectParam) {
@@ -266,6 +269,15 @@ export default function DemoPage() {
               <Bug className="w-4 h-4" />
               <span>Отладка</span>
             </Button>
+            <Button
+              variant={activeTab === 'preview' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('preview')}
+              className="flex items-center space-x-2"
+            >
+              <Monitor className="w-4 h-4" />
+              <span>Превью</span>
+            </Button>
           </div>
         </div>
 
@@ -390,6 +402,10 @@ export default function DemoPage() {
                 language={selectedFile ? selectedFile.split('.').pop() || 'javascript' : 'javascript'}
                 className="h-[600px]"
               />
+            )}
+
+            {activeTab === 'preview' && (
+              <LivePreview className="h-[600px]" />
             )}
           </div>
 
