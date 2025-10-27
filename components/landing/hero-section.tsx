@@ -253,6 +253,20 @@ export function HeroSection() {
               Превью
             </Button>
             <Button
+              onClick={() => router.push('/demo?tab=tests')}
+              variant="outline"
+              className="w-full sm:w-auto border-zinc-700/50 text-zinc-300 hover:bg-zinc-800/50 hover:text-zinc-100 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-200 text-sm sm:text-base"
+            >
+              Тесты
+            </Button>
+            <Button
+              onClick={() => router.push('/demo?tab=optimize')}
+              variant="outline"
+              className="w-full sm:w-auto border-zinc-700/50 text-zinc-300 hover:bg-zinc-800/50 hover:text-zinc-100 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-200 text-sm sm:text-base"
+            >
+              Оптимизация
+            </Button>
+            <Button
               onClick={() => router.push('/access')}
               variant="outline"
               className="w-full sm:w-auto border-zinc-700/50 text-zinc-300 hover:bg-zinc-800/50 hover:text-zinc-100 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-200 text-sm sm:text-base"

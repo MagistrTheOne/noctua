@@ -12,7 +12,9 @@ import { GigaChat } from '@/components/demo/gigachat-chat'
 import { CodeReview } from '@/components/demo/code-review'
 import { DebugAssistant } from '@/components/demo/debug-assistant'
 import { LivePreview } from '@/components/demo/live-preview'
-import { Sparkles, Clock, Users, TrendingUp, ArrowRight, Zap, Code, FileText, Play, MessageSquare, Search, Bug, Monitor } from 'lucide-react'
+import TestGenerator from '@/components/demo/test-generator'
+import PerformanceOptimizer from '@/components/demo/performance-optimizer'
+import { Sparkles, Clock, Users, TrendingUp, ArrowRight, Zap, Code, FileText, Play, MessageSquare, Search, Bug, Monitor, TestTube, Gauge, RefreshCw, BookOpen, Shield, Network, Languages, FileCode } from 'lucide-react'
 import Link from 'next/link'
 
 interface GeneratedProject {
@@ -48,7 +50,7 @@ export default function DemoPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [projectFiles, setProjectFiles] = useState<Array<{name: string, content: string}>>([])
-  const [activeTab, setActiveTab] = useState<'generate' | 'chat' | 'review' | 'debug' | 'preview'>('generate')
+  const [activeTab, setActiveTab] = useState<'generate' | 'chat' | 'review' | 'debug' | 'preview' | 'tests' | 'optimize' | 'refactor' | 'docs' | 'security' | 'diagrams' | 'translate' | 'api-docs'>('generate')
 
   // Обработка проекта из URL параметров (при переходе с Hero Section)
   useEffect(() => {
@@ -278,6 +280,78 @@ export default function DemoPage() {
               <Monitor className="w-4 h-4" />
               <span>Превью</span>
             </Button>
+            <Button
+              variant={activeTab === 'tests' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('tests')}
+              className="flex items-center space-x-2"
+            >
+              <TestTube className="w-4 h-4" />
+              <span>Тесты</span>
+            </Button>
+            <Button
+              variant={activeTab === 'optimize' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('optimize')}
+              className="flex items-center space-x-2"
+            >
+              <Gauge className="w-4 h-4" />
+              <span>Оптимизация</span>
+            </Button>
+            <Button
+              variant={activeTab === 'refactor' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('refactor')}
+              className="flex items-center space-x-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Рефакторинг</span>
+            </Button>
+            <Button
+              variant={activeTab === 'docs' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('docs')}
+              className="flex items-center space-x-2"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>Документация</span>
+            </Button>
+            <Button
+              variant={activeTab === 'security' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('security')}
+              className="flex items-center space-x-2"
+            >
+              <Shield className="w-4 h-4" />
+              <span>Безопасность</span>
+            </Button>
+            <Button
+              variant={activeTab === 'diagrams' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('diagrams')}
+              className="flex items-center space-x-2"
+            >
+              <Network className="w-4 h-4" />
+              <span>Диаграммы</span>
+            </Button>
+            <Button
+              variant={activeTab === 'translate' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('translate')}
+              className="flex items-center space-x-2"
+            >
+              <Languages className="w-4 h-4" />
+              <span>Перевод</span>
+            </Button>
+            <Button
+              variant={activeTab === 'api-docs' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('api-docs')}
+              className="flex items-center space-x-2"
+            >
+              <FileCode className="w-4 h-4" />
+              <span>API Docs</span>
+            </Button>
           </div>
         </div>
 
@@ -406,6 +480,62 @@ export default function DemoPage() {
 
             {activeTab === 'preview' && (
               <LivePreview className="h-[600px]" />
+            )}
+
+            {activeTab === 'tests' && (
+              <TestGenerator />
+            )}
+
+            {activeTab === 'optimize' && (
+              <PerformanceOptimizer />
+            )}
+
+            {activeTab === 'refactor' && (
+              <div className="text-center py-8 text-gray-500">
+                <RefreshCw className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <h3 className="text-lg font-semibold mb-2">AI Рефакторинг кода</h3>
+                <p>Компонент в разработке...</p>
+              </div>
+            )}
+
+            {activeTab === 'docs' && (
+              <div className="text-center py-8 text-gray-500">
+                <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <h3 className="text-lg font-semibold mb-2">AI Генератор документации</h3>
+                <p>Компонент в разработке...</p>
+              </div>
+            )}
+
+            {activeTab === 'security' && (
+              <div className="text-center py-8 text-gray-500">
+                <Shield className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <h3 className="text-lg font-semibold mb-2">AI Анализ безопасности</h3>
+                <p>Компонент в разработке...</p>
+              </div>
+            )}
+
+            {activeTab === 'diagrams' && (
+              <div className="text-center py-8 text-gray-500">
+                <Network className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <h3 className="text-lg font-semibold mb-2">AI Генератор диаграмм</h3>
+                <p>Компонент в разработке...</p>
+              </div>
+            )}
+
+            {activeTab === 'translate' && (
+              <div className="text-center py-8 text-gray-500">
+                <Languages className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <h3 className="text-lg font-semibold mb-2">AI Переводчик кода</h3>
+                <p>Компонент в разработке...</p>
+              </div>
+            )}
+
+            {activeTab === 'api-docs' && (
+              <div className="text-center py-8 text-gray-500">
+                <FileCode className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <h3 className="text-lg font-semibold mb-2">AI Генератор API документации</h3>
+                <p>Компонент в разработке...</p>
+              </div>
             )}
           </div>
 

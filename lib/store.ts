@@ -19,7 +19,7 @@ interface DemoState {
   projectFiles: Array<{name: string, content: string}>
   
   // Active tab
-  activeTab: 'generate' | 'chat' | 'review' | 'debug'
+  activeTab: 'generate' | 'chat' | 'review' | 'debug' | 'preview' | 'tests' | 'optimize' | 'refactor' | 'docs' | 'security' | 'diagrams' | 'translate' | 'api-docs'
   
   // Chat messages
   chatMessages: Array<{
@@ -39,7 +39,7 @@ interface DemoState {
   addFile: (fileName: string, content: string) => void
   deleteFile: (fileName: string) => void
   renameFile: (oldName: string, newName: string) => void
-  setActiveTab: (tab: 'generate' | 'chat' | 'review' | 'debug' | 'preview') => void
+  setActiveTab: (tab: 'generate' | 'chat' | 'review' | 'debug' | 'preview' | 'tests' | 'optimize' | 'refactor' | 'docs' | 'security' | 'diagrams' | 'translate' | 'api-docs') => void
   addChatMessage: (message: any) => void
   clearChatMessages: () => void
   resetDemo: () => void
