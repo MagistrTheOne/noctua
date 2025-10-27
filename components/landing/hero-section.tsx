@@ -225,6 +225,27 @@ export function HeroSection() {
               Попробовать демо
             </Button>
             <Button
+              onClick={() => router.push('/demo?tab=chat')}
+              variant="outline"
+              className="w-full sm:w-auto border-zinc-700/50 text-zinc-300 hover:bg-zinc-800/50 hover:text-zinc-100 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-200 text-sm sm:text-base"
+            >
+              Чат с AI
+            </Button>
+            <Button
+              onClick={() => router.push('/demo?tab=review')}
+              variant="outline"
+              className="w-full sm:w-auto border-zinc-700/50 text-zinc-300 hover:bg-zinc-800/50 hover:text-zinc-100 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-200 text-sm sm:text-base"
+            >
+              Ревью кода
+            </Button>
+            <Button
+              onClick={() => router.push('/demo?tab=debug')}
+              variant="outline"
+              className="w-full sm:w-auto border-zinc-700/50 text-zinc-300 hover:bg-zinc-800/50 hover:text-zinc-100 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-200 text-sm sm:text-base"
+            >
+              Отладка
+            </Button>
+            <Button
               onClick={() => router.push('/auth/signup')}
               variant="outline"
               className="w-full sm:w-auto border-zinc-700/50 text-zinc-300 hover:bg-zinc-800/50 hover:text-zinc-100 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-200 text-sm sm:text-base"

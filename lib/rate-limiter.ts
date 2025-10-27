@@ -180,6 +180,6 @@ export function getClientIP(request: Request): string {
 
 // Константы для демо API
 export const DEMO_RATE_LIMITS = {
-  GENERATIONS_PER_HOUR: 3,
+  GENERATIONS_PER_HOUR: 10, // Увеличено для тестирования
   WINDOW_MS: 60 * 60 * 1000, // 1 час
 } as const

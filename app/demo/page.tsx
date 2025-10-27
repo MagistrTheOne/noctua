@@ -8,7 +8,10 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { ProjectPreview } from '@/components/demo/project-preview'
 import { MonacoCodeEditor } from '@/components/demo/monaco-editor'
-import { Sparkles, Clock, Users, TrendingUp, ArrowRight, Zap, Code, FileText, Play } from 'lucide-react'
+import { GigaChat } from '@/components/demo/gigachat-chat'
+import { CodeReview } from '@/components/demo/code-review'
+import { DebugAssistant } from '@/components/demo/debug-assistant'
+import { Sparkles, Clock, Users, TrendingUp, ArrowRight, Zap, Code, FileText, Play, MessageSquare, Search, Bug } from 'lucide-react'
 import Link from 'next/link'
 
 interface GeneratedProject {
@@ -44,10 +47,21 @@ export default function DemoPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [projectFiles, setProjectFiles] = useState<Array<{name: string, content: string}>>([])
+  const [activeTab, setActiveTab] = useState<'generate' | 'chat' | 'review' | 'debug'>('generate')
 
   // Обработка проекта из URL параметров (при переходе с Hero Section)
   useEffect(() => {
     const projectParam = searchParams.get('project')
+    const tabParam = searchParams.get('tab')
+    
+    if (tabParam === 'chat') {
+      setActiveTab('chat')
+    } else if (tabParam === 'review') {
+      setActiveTab('review')
+    } else if (tabParam === 'debug') {
+      setActiveTab('debug')
+    }
+    
     if (projectParam) {
       try {
         const project = JSON.parse(decodeURIComponent(projectParam))
@@ -167,6 +181,21 @@ export default function DemoPage() {
     )
   }
 
+  const handleProjectFromChat = (project: any) => {
+    setGeneratedProject(project)
+    
+    // Конвертируем файлы проекта для Monaco Editor
+    const files = getAllFiles(project.files)
+    setProjectFiles(files)
+    
+    if (files.length > 0) {
+      setSelectedFile(files[0].name)
+    }
+    
+    // Переключаемся на вкладку генерации
+    setActiveTab('generate')
+  }
+
   return (
     <div className="min-h-screen bg-zinc-950">
       {/* Header */}
@@ -198,95 +227,170 @@ export default function DemoPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Tab Navigation */}
+        <div className="mb-6">
+          <div className="flex space-x-1 bg-zinc-900/50 p-1 rounded-lg w-fit">
+            <Button
+              variant={activeTab === 'generate' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('generate')}
+              className="flex items-center space-x-2"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Генерация</span>
+            </Button>
+            <Button
+              variant={activeTab === 'chat' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('chat')}
+              className="flex items-center space-x-2"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>Чат с AI</span>
+            </Button>
+            <Button
+              variant={activeTab === 'review' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('review')}
+              className="flex items-center space-x-2"
+            >
+              <Search className="w-4 h-4" />
+              <span>Ревью кода</span>
+            </Button>
+            <Button
+              variant={activeTab === 'debug' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('debug')}
+              className="flex items-center space-x-2"
+            >
+              <Bug className="w-4 h-4" />
+              <span>Отладка</span>
+            </Button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Panel - Input */}
           <div className="space-y-6">
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-zinc-100">
-                  <Sparkles className="h-5 w-5 text-blue-400" />
-                  <span>AI Генератор проектов</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Textarea
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Опишите проект, который хотите создать..."
-                    className="min-h-[120px] bg-zinc-900/30 border-zinc-700/50 text-zinc-100 placeholder:text-zinc-500 resize-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
-                    disabled={isGenerating}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <p className="text-sm text-zinc-400">Примеры запросов:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {promptExamples.slice(0, 3).map((example, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setPrompt(example)}
-                        className="text-xs bg-zinc-800/50 hover:bg-zinc-700/50 text-zinc-300 px-3 py-1 rounded transition-colors"
+            {activeTab === 'generate' && (
+              <>
+                <Card className="glass-card">
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2 text-zinc-100">
+                      <Sparkles className="h-5 w-5 text-blue-400" />
+                      <span>AI Генератор проектов</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Textarea
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        placeholder="Опишите проект, который хотите создать..."
+                        className="min-h-[120px] bg-zinc-900/30 border-zinc-700/50 text-zinc-100 placeholder:text-zinc-500 resize-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
                         disabled={isGenerating}
-                      >
-                        {example}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                      />
+                    </div>
 
-                <Button
-                  onClick={handleGenerate}
-                  disabled={isGenerating || !prompt.trim()}
-                  className="w-full bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
-                >
-                  {isGenerating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Генерируем...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      Сгенерировать проект
-                    </>
-                  )}
-                </Button>
+                    <div className="space-y-2">
+                      <p className="text-sm text-zinc-400">Примеры запросов:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {promptExamples.slice(0, 3).map((example, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setPrompt(example)}
+                            className="text-xs bg-zinc-800/50 hover:bg-zinc-700/50 text-zinc-300 px-3 py-1 rounded transition-colors"
+                            disabled={isGenerating}
+                          >
+                            {example}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
-                {error && (
-                  <div className="p-3 bg-red-900/20 border border-red-500/50 rounded-lg">
-                    <p className="text-red-400 text-sm">{error}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                    <Button
+                      onClick={handleGenerate}
+                      disabled={isGenerating || !prompt.trim()}
+                      className="w-full bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
+                    >
+                      {isGenerating ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Генерируем...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-4 w-4 mr-2" />
+                          Сгенерировать проект
+                        </>
+                      )}
+                    </Button>
 
-            {/* Features */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="text-zinc-100">Возможности демо</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center space-x-2 text-zinc-400">
-                    <Code className="h-4 w-4 text-blue-400" />
-                    <span className="text-sm">Monaco Editor</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-zinc-400">
-                    <FileText className="h-4 w-4 text-green-400" />
-                    <span className="text-sm">Syntax Highlight</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-zinc-400">
-                    <Play className="h-4 w-4 text-purple-400" />
-                    <span className="text-sm">Live Preview</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-zinc-400">
-                    <Zap className="h-4 w-4 text-yellow-400" />
-                    <span className="text-sm">AI Generation</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                    {error && (
+                      <div className="p-3 bg-red-900/20 border border-red-500/50 rounded-lg">
+                        <p className="text-red-400 text-sm">{error}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Features */}
+                <Card className="glass-card">
+                  <CardHeader>
+                    <CardTitle className="text-zinc-100">Возможности демо</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex items-center space-x-2 text-zinc-400">
+                        <Code className="h-4 w-4 text-blue-400" />
+                        <span className="text-sm">Monaco Editor</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-zinc-400">
+                        <FileText className="h-4 w-4 text-green-400" />
+                        <span className="text-sm">Syntax Highlight</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-zinc-400">
+                        <Play className="h-4 w-4 text-purple-400" />
+                        <span className="text-sm">Live Preview</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-zinc-400">
+                        <Zap className="h-4 w-4 text-yellow-400" />
+                        <span className="text-sm">AI Generation</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Project Preview */}
+                <ProjectPreview 
+                  project={generatedProject} 
+                  isLoading={isGenerating}
+                />
+              </>
+            )}
+
+            {activeTab === 'chat' && (
+              <GigaChat 
+                onProjectGenerated={handleProjectFromChat}
+                className="h-[600px]"
+              />
+            )}
+
+            {activeTab === 'review' && (
+              <CodeReview 
+                code={selectedFile ? projectFiles.find(f => f.name === selectedFile)?.content || '' : ''}
+                language={selectedFile ? selectedFile.split('.').pop() || 'javascript' : 'javascript'}
+                className="h-[600px]"
+              />
+            )}
+
+            {activeTab === 'debug' && (
+              <DebugAssistant 
+                code={selectedFile ? projectFiles.find(f => f.name === selectedFile)?.content || '' : ''}
+                language={selectedFile ? selectedFile.split('.').pop() || 'javascript' : 'javascript'}
+                className="h-[600px]"
+              />
+            )}
           </div>
 
           {/* Right Panel - Project Preview */}
