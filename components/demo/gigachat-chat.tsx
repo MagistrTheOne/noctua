@@ -25,7 +25,7 @@ export function GigaChat({ onProjectGenerated, className }: GigaChatProps) {
     {
       id: '1',
       role: 'assistant',
-      content: 'Привет! Я GigaChat - ваш AI помощник для разработки. Я могу помочь с:\n\n• Генерацией кода и проектов\n• Объяснением технологий\n• Отладкой и решением проблем\n• Созданием технических заданий\n• Ревью кода\n\nЧто бы вы хотели создать или обсудить?',
+      content: 'Привет! Я Noctu - ваш AI помощник для разработки. Я могу помочь с:\n\n• Генерацией кода и проектов\n• Объяснением технологий\n• Отладкой и решением проблем\n• Созданием технических заданий\n• Ревью кода\n\nЧто бы вы хотели создать или обсудить?',
       timestamp: new Date(),
       type: 'text'
     }
@@ -164,7 +164,7 @@ export function GigaChat({ onProjectGenerated, className }: GigaChatProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center space-x-2 text-lg">
             <Bot className="w-5 h-5 text-blue-500" />
-            <span>GigaChat Assistant</span>
+            <span>Noctu Assistant</span>
             <Badge variant="secondary" className="text-xs">
               AI Powered
             </Badge>
@@ -194,7 +194,7 @@ export function GigaChat({ onProjectGenerated, className }: GigaChatProps) {
                 }`}
               >
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
                     message.role === 'user'
                       ? 'bg-blue-600 text-white'
                       : 'bg-zinc-700 text-zinc-200'

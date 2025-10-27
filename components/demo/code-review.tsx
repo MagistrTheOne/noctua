@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -16,7 +17,8 @@ import {
   Download,
   RefreshCw,
   Star,
-  Clock
+  Clock,
+  Upload
 } from 'lucide-react'
 
 interface CodeReviewResult {
@@ -46,9 +48,11 @@ export function CodeReview({ code, language, onReviewComplete, className }: Code
   const [isReviewing, setIsReviewing] = useState(false)
   const [reviewResult, setReviewResult] = useState<CodeReviewResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [userCode, setUserCode] = useState(code || '')
+  const [userLanguage, setUserLanguage] = useState(language || 'javascript')
 
   const handleReview = async () => {
-    if (!code.trim()) {
+    if (!userCode.trim()) {
       setError('Пожалуйста, введите код для анализа')
       return
     }
@@ -63,8 +67,8 @@ export function CodeReview({ code, language, onReviewComplete, className }: Code
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          code: code.trim(),
-          language: language || 'javascript'
+          code: userCode.trim(),
+          language: userLanguage
         }),
       })
 
@@ -143,9 +147,44 @@ export function CodeReview({ code, language, onReviewComplete, className }: Code
       <CardContent className="flex-1 flex flex-col p-0">
         {/* Review Button */}
         <div className="p-4 border-b border-zinc-800">
+          {/* Code Input Area */}
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-zinc-300">
+                Код для анализа
+              </label>
+              <div className="flex items-center space-x-2">
+                <Input
+                  value={userLanguage}
+                  onChange={(e) => setUserLanguage(e.target.value)}
+                  placeholder="javascript"
+                  className="w-24 h-8 text-xs bg-zinc-900/30 border-zinc-700/50 text-zinc-100"
+                />
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setUserCode(code || '')
+                    setUserLanguage(language || 'javascript')
+                  }}
+                  className="text-zinc-400 hover:text-zinc-200"
+                  title="Использовать код из редактора"
+                >
+                  <Upload className="w-3 h-3" />
+                </Button>
+              </div>
+            </div>
+            <Textarea
+              value={userCode}
+              onChange={(e) => setUserCode(e.target.value)}
+              placeholder="Вставьте код для анализа..."
+              className="min-h-[120px] resize-none bg-zinc-900/30 border-zinc-700/50 text-zinc-100 placeholder:text-zinc-500 font-mono text-sm"
+            />
+          </div>
+
           <Button
             onClick={handleReview}
-            disabled={isReviewing || !code.trim()}
+            disabled={isReviewing || !userCode.trim()}
             className="w-full"
           >
             {isReviewing ? (

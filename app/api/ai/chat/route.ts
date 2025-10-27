@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Определяем тип запроса и формируем системный промпт
-    let systemPrompt = `Ты GigaChat - эксперт по разработке ПО и AI помощник для Nocturide.
+    let systemPrompt = `Ты Noctu - эксперт по разработке ПО и AI помощник для Nocturide.
 
 Твоя роль:
 - Помогать с разработкой и генерацией кода

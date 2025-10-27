@@ -67,11 +67,25 @@ export async function POST(request: NextRequest) {
     // Пытаемся распарсить JSON ответ
     let debugResult
     try {
-      // Убираем возможные markdown обертки
-      const cleanResponse = response.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+      // Убираем возможные markdown обертки и извлекаем JSON
+      let cleanResponse = response
+      
+      // Ищем JSON блок в ответе
+      const jsonMatch = response.match(/```json\s*([\s\S]*?)\s*```/) || 
+                       response.match(/```\s*([\s\S]*?)\s*```/) ||
+                       response.match(/\{[\s\S]*\}/)
+      
+      if (jsonMatch) {
+        cleanResponse = jsonMatch[1] || jsonMatch[0]
+      }
+      
+      // Очищаем от лишних символов
+      cleanResponse = cleanResponse.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+      
       debugResult = JSON.parse(cleanResponse)
     } catch (parseError) {
       console.error('Failed to parse debug result:', parseError)
+      console.error('Raw response:', response)
       
       // Fallback - создаем базовую структуру
       debugResult = {
