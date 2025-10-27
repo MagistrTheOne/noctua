@@ -2,9 +2,9 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
+import { JSONLD } from "@/components/seo/json-ld";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { Analytics } from "@/components/analytics/analytics";
-import { JSONLD } from "@/components/seo/json-ld";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
