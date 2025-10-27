@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import Link from 'next/link'
-import { LanguageToggle } from './language-toggle'
 import { Menu, X } from 'lucide-react'
 
 export function NavigationBar() {
@@ -15,19 +14,19 @@ export function NavigationBar() {
       role="navigation"
       aria-label="Main navigation"
     >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto px-3 sm:px-4">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           <div className="flex items-center space-x-2">
             <Link
               href="#hero"
-              className="text-xl font-bold text-zinc-100 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded"
+              className="text-lg sm:text-xl font-bold text-zinc-100 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded"
               aria-label="Nocturide - Go to homepage"
             >
               Nocturide
             </Link>
           </div>
 
-          <div className="hidden md:flex items-center space-x-6" role="menubar">
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-6" role="menubar">
             <Link
               href="#features"
               className="text-zinc-400 hover:text-zinc-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
@@ -57,16 +56,14 @@ export function NavigationBar() {
               Контакты
             </Link>
             <div className="flex items-center space-x-3" role="group" aria-label="User actions">
-              <LanguageToggle />
             </div>
           </div>
 
-          <div className="md:hidden flex items-center space-x-2">
-            <LanguageToggle />
+          <div className="md:hidden flex items-center">
             <Button
               variant="ghost"
               size="sm"
-              className="text-zinc-400 focus:ring-2 focus:ring-zinc-500"
+              className="text-zinc-400 focus:ring-2 focus:ring-zinc-500 p-2"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
@@ -83,7 +80,7 @@ export function NavigationBar() {
           role="menu"
           aria-hidden={!isMenuOpen}
         >
-          <div className="py-4 space-y-4 border-t border-zinc-800/50">
+          <div className="py-3 sm:py-4 space-y-3 sm:space-y-4 border-t border-zinc-800/50">
             <Link
               href="#features"
               className="block text-zinc-400 hover:text-zinc-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded px-2 py-1"
@@ -115,7 +112,7 @@ export function NavigationBar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Контакты
-                </Link>
+            </Link>
           </div>
         </div>
       </div>
