@@ -28,13 +28,17 @@ interface CodeReviewResult {
     message: string
     line?: number
     severity: 'high' | 'medium' | 'low'
+    qaMockery?: string
   }>
   suggestions: Array<{
     title: string
     description: string
     code?: string
+    ceoThreat?: string
   }>
   summary: string
+  qaRant?: string
+  ceoWarning?: string
 }
 
 interface CodeReviewProps {
@@ -231,6 +235,26 @@ export function CodeReview({ code, language, onReviewComplete, className }: Code
                 </p>
               </div>
 
+              {/* QA Rant */}
+              {reviewResult.qaRant && (
+                <div className="p-4 bg-red-900/20 border border-red-800/50 rounded-lg">
+                  <h4 className="text-sm font-medium text-red-300 mb-2">🔥 Тирада против QA:</h4>
+                  <p className="text-sm text-red-200 leading-relaxed">
+                    {reviewResult.qaRant}
+                  </p>
+                </div>
+              )}
+
+              {/* CEO Warning */}
+              {reviewResult.ceoWarning && (
+                <div className="p-4 bg-yellow-900/20 border border-yellow-800/50 rounded-lg">
+                  <h4 className="text-sm font-medium text-yellow-300 mb-2">⚠️ Предупреждение CEO:</h4>
+                  <p className="text-sm text-yellow-200 leading-relaxed">
+                    {reviewResult.ceoWarning}
+                  </p>
+                </div>
+              )}
+
               {/* Issues */}
               {reviewResult.issues.length > 0 && (
                 <div>
@@ -257,6 +281,11 @@ export function CodeReview({ code, language, onReviewComplete, className }: Code
                               )}
                             </div>
                             <p className="text-sm">{issue.message}</p>
+                            {issue.qaMockery && (
+                              <div className="mt-2 p-2 bg-red-900/20 border border-red-800/50 rounded text-xs text-red-300">
+                                <strong>QA высмеивание:</strong> {issue.qaMockery}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -295,6 +324,11 @@ export function CodeReview({ code, language, onReviewComplete, className }: Code
                         <p className="text-sm text-zinc-400 mb-2">
                           {suggestion.description}
                         </p>
+                        {suggestion.ceoThreat && (
+                          <div className="mt-2 p-2 bg-yellow-900/20 border border-yellow-800/50 rounded text-xs text-yellow-300">
+                            <strong>Угроза CEO:</strong> {suggestion.ceoThreat}
+                          </div>
+                        )}
                         {suggestion.code && (
                           <pre className="text-xs bg-zinc-900/50 p-2 rounded overflow-x-auto">
                             <code>{suggestion.code}</code>

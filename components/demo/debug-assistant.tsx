@@ -27,6 +27,9 @@ interface DebugResult {
   explanation: string
   severity: 'critical' | 'high' | 'medium' | 'low'
   category: 'syntax' | 'logic' | 'performance' | 'security' | 'best-practice'
+  qaMockery?: string
+  teamThreat?: string
+  ceoWarning?: string
 }
 
 interface DebugAssistantProps {
@@ -262,6 +265,45 @@ export function DebugAssistant({
                   {debugResult.explanation}
                 </p>
               </div>
+
+              {/* QA Mockery */}
+              {debugResult.qaMockery && (
+                <div className="p-4 bg-red-900/20 border border-red-800/50 rounded-lg">
+                  <h4 className="text-sm font-medium text-red-300 mb-2 flex items-center space-x-2">
+                    <Bug className="w-4 h-4 text-red-400" />
+                    <span>🔥 QA высмеивание:</span>
+                  </h4>
+                  <p className="text-sm text-red-200 leading-relaxed">
+                    {debugResult.qaMockery}
+                  </p>
+                </div>
+              )}
+
+              {/* Team Threat */}
+              {debugResult.teamThreat && (
+                <div className="p-4 bg-orange-900/20 border border-orange-800/50 rounded-lg">
+                  <h4 className="text-sm font-medium text-orange-300 mb-2 flex items-center space-x-2">
+                    <AlertTriangle className="w-4 h-4 text-orange-400" />
+                    <span>⚠️ Угроза команде:</span>
+                  </h4>
+                  <p className="text-sm text-orange-200 leading-relaxed">
+                    {debugResult.teamThreat}
+                  </p>
+                </div>
+              )}
+
+              {/* CEO Warning */}
+              {debugResult.ceoWarning && (
+                <div className="p-4 bg-yellow-900/20 border border-yellow-800/50 rounded-lg">
+                  <h4 className="text-sm font-medium text-yellow-300 mb-2 flex items-center space-x-2">
+                    <Zap className="w-4 h-4 text-yellow-400" />
+                    <span>⚡ Предупреждение CEO:</span>
+                  </h4>
+                  <p className="text-sm text-yellow-200 leading-relaxed">
+                    {debugResult.ceoWarning}
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
